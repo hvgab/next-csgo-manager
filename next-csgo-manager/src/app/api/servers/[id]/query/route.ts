@@ -1,22 +1,19 @@
 import { NextResponse } from "next/server";
-
+import { useRouter } from 'next/router';
+import { prisma } from '../../../../lib/database'
 import { Server, RCON, MasterServer } from '@fabricio-191/valve-server-query';
 
 BigInt.prototype["toJSON"] = function () {
   return this.toString();
 };
 
-const server = {
-  ip: "theck1.no",
-  port: 27030
-}
+// GET /api/servers/[id]/query
+export async function GET(request: Request, { params: { id }, }: { params: { id: number }; }) {
 
-export async function GET({ params }) {
-  console.log("params")
-  console.log(params)
+  const server = await prisma.server.findUnique({ where: { id: Number(id) } });
 
   const serverConnection = await Server({
-    ip: server.ip,
+    ip: server.host,
     port: server.port,
     timeout: 3000,
   });

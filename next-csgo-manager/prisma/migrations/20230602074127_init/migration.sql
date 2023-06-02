@@ -1,0 +1,6 @@
+-- CreateTable
+CREATE TABLE "Server" (
+    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "host" TEXT NOT NULL,
+    "port" INTEGER NOT NULL
+);
