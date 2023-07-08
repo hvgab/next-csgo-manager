@@ -7,9 +7,9 @@ BigInt.prototype["toJSON"] = function () {
 };
 
 // GET /api/servers/[id]/players
-export async function GET(request: Request, { params: { id }, }: { params: { id: number }; }) {
+export async function GET(request: Request, { params: { serverId }, }: { params: { serverId: number }; }) {
 
-  const server = await prisma.server.findUnique({ where: { id: Number(id) } });
+  const server = await prisma.server.findUnique({ where: { id: Number(serverId) } });
 
   const serverConnection = await Server({
     ip: server.host,
@@ -18,8 +18,7 @@ export async function GET(request: Request, { params: { id }, }: { params: { id:
   });
 
   const players = await serverConnection.getPlayers();
-  console.log("players");
-  console.log(players);
+  console.log(`Players: \n ${JSON.stringify(players)}`);
 
   return NextResponse.json(players);
 }

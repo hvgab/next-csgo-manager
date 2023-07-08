@@ -8,9 +8,9 @@ BigInt.prototype["toJSON"] = function () {
 };
 
 // GET /api/servers/[id]/query
-export async function GET(request: Request, { params: { id }, }: { params: { id: number }; }) {
+export async function GET(request: Request, { params: { serverId }, }: { params: { serverId: number }; }) {
 
-  const server = await prisma.server.findUnique({ where: { id: Number(id) } });
+  const server = await prisma.server.findUnique({ where: { id: Number(serverId) } });
 
   const serverConnection = await Server({
     ip: server.host,
@@ -24,6 +24,12 @@ export async function GET(request: Request, { params: { id }, }: { params: { id:
   console.log("info");
   console.log(info);
 
+  let mapWorkshopId = "";
+  const mapNameArray = info.map.split("/");
+  if (mapNameArray.length == 3) {
+    mapWorkshopId = mapNameArray[1];
+  }
+
   const players = await serverConnection.getPlayers();
   console.log("players");
   console.log(players);
@@ -35,6 +41,6 @@ export async function GET(request: Request, { params: { id }, }: { params: { id:
   console.log("serverConnection.lastPing");
   console.log(serverConnection.lastPing);
 
-  return NextResponse.json({ info, players, rules, "lastPing": serverConnection.lastPing });
+  return NextResponse.json({ mapWorkshopId, info, players, rules, "lastPing": serverConnection.lastPing });
 }
 

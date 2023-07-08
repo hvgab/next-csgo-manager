@@ -1,11 +1,13 @@
-"use server";
+const { Server, RCON, MasterServer } = require("@fabricio-191/valve-server-query");
 
-const {
-  Server,
-  RCON,
-  MasterServer,
-} = require("@fabricio-191/valve-server-query");
-const Gamedig = require("gamedig");
+export async function mapNameToWorkshopId(mapName: string) {
+  // Given a string like 'workshop/1590058182/de_grid' return '1590058182'
+  const mapNameArray = mapName.split("/");
+  if (mapNameArray.length == 3) {
+    return mapNameArray[1];
+  }
+  return mapName;
+}
 
 export module ServerQuery {
   export async function getServer(server_obj) {
