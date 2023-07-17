@@ -11,19 +11,17 @@ BigInt.prototype["toJSON"] = function () {
 export async function POST(request: Request, { params: { serverId }, }: { params: { serverId: number }; }) {
 
     const server = await prisma.server.findUnique({ where: { id: Number(serverId) } });
+    console.log(`rcon.route server: ${JSON.stringify(server)}`)
     if (server == null) {
         return NextResponse.json({ "status": "error", "error": "server not found" })
     }
-
     if (server.rcon_password == null) {
         return NextResponse.json({ "status": "error", "error": "rcon_password not set for server" })
     }
 
-    console.log("server")
-    console.log(server)
-
+    // Data from POST
     const body = await request.json();
-    console.log(`body: ${body}`)
+    console.log(`body: ${JSON.stringify(body)}`)
 
     const rcon = await RCON({
         ip: server.host,

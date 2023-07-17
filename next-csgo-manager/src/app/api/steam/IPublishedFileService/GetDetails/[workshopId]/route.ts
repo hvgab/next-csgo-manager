@@ -10,6 +10,10 @@ export async function GET(request: Request, { params: { workshopId }, }: { param
     searchParams.append("key", process.env.STEAM_API_KEY);
     searchParams.append("publishedfileids[0]", workshopId);
 
+    searchParams.append("short_description", false);        // Short description instead of full.
+    searchParams.append("strip_description_bbcode", true);  // BB-code to normal text
+    searchParams.append("includeadditionalpreviews", true); // Flere previews imgs
+
     console.log("searchParams.toString()")
     console.log(searchParams.toString())
 

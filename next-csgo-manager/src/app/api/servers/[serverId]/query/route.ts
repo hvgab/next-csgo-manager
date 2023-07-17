@@ -11,12 +11,20 @@ BigInt.prototype["toJSON"] = function () {
 export async function GET(request: Request, { params: { serverId }, }: { params: { serverId: number }; }) {
 
   const server = await prisma.server.findUnique({ where: { id: Number(serverId) } });
+  console.log(`server: ${JSON.stringify(server)}`)
 
-  const serverConnection = await Server({
-    ip: server.host,
-    port: server.port,
-    timeout: 3000,
-  });
+  let serverConnection;
+  try {
+    serverConnection = await Server({
+      ip: server.host,
+      port: server.port,
+      timeout: 3000,
+    });
+  } catch (error) {
+    console.log(error)
+    console.error(`Could not query server. ${error.code} ${error.message}`)
+    return NextResponse.json({ error: error.message })
+  }
   console.log("serverConnection");
   console.log(serverConnection);
 

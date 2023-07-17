@@ -14,15 +14,12 @@ export default function RconComponent({ serverId }: { serverId: number }) {
 
   // Run "status" on page load as init data
   useEffect(() => {
-    function doHandleCommand(rcon_command: string) {
-      return handleCommand(rcon_command);
-    }
     if (firstStatusHasLoaded === false) {
       setFirstStatusHasLoaded(true);
-      doHandleCommand("status");
+      handleCommand("status");
     }
     scrollToForm();
-  }, []);
+  }, [firstStatusHasLoaded]);
 
   // Handles the submit event on form submit.
   const handleSubmit = async (event) => {
@@ -40,6 +37,8 @@ export default function RconComponent({ serverId }: { serverId: number }) {
   const handleCommand = async (rcon_command: string) => {
     // Send the data to the server in JSON format.
     const JSONdata = JSON.stringify({ rcon_command: rcon_command });
+    console.log("JSONdata");
+    console.log(JSONdata);
 
     // Add command to history
     const commandToHistory = {
@@ -50,32 +49,34 @@ export default function RconComponent({ serverId }: { serverId: number }) {
       message: rcon_command,
     };
     setRconCommandHistory([...rconCommandHistory, commandToHistory]);
+    console.log(`command id: ${rconCommandHistoryId}`);
 
     // API endpoint where we send form data.
     const endpoint = `/api/servers/${serverId}/rcon`;
+    console.log(endpoint);
 
     // Form the request for sending data to the server.
     const options = {
+      // The method is POST because we are sending data.
       method: "POST",
+      // Tell the server we're sending JSON.
       headers: {
         "Content-Type": "application/json",
       },
+      // Body of the request is the JSON data we created above.
       body: JSONdata,
     };
-    console.log(`options: ${JSON.stringify(options)}`);
 
     // Send the form data to our forms API on Vercel and get a response.
     const response = await fetch(endpoint, options);
-    console.log(`response: ${JSON.stringify(response)}`);
 
     // Get the response data from server as JSON.
-    let result;
-    try {
-      result = await response.json();
-    } catch (error) {
-      result = { response: `${error.name} ${error.code} ${error.message}` };
-    }
-    console.log(`result: ${JSON.stringify(result)}`);
+    // If server returns the name submitted, that means the form works.
+    const result = await response.json();
+    console.log(`Result: \n${result.response}`);
+    /* \n to <br>  */
+    const rcon_text = result.response.replace(/\\n/g, "<br />");
+    console.log(`rcon_text: \n ${rcon_text}`);
 
     // Add response to history
     const responseToHistory = {
@@ -86,7 +87,9 @@ export default function RconComponent({ serverId }: { serverId: number }) {
       message: result.response,
     };
     setRconCommandHistory([...rconCommandHistory, commandToHistory, responseToHistory]);
+    console.log(`result id: ${rconCommandHistoryId + 1}`);
     setRconCommandHistoryId(rconCommandHistoryId + 2);
+    console.log(`new id: ${rconCommandHistoryId}`);
     // Scroll after DOM
     scrollToForm();
   };

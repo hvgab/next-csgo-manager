@@ -13,20 +13,39 @@ export default async function ServerList() {
 
   return (
     <div className="container mx-auto px-4">
-      <table className="table-auto">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Host</th>
-            <th>Port</th>
-          </tr>
-        </thead>
-        <tbody>
-          {servers.map((server) => (
-            <ServerTableRow key={server.id} serverId={server.id}></ServerTableRow>
-          ))}
-        </tbody>
-      </table>
+      <div className="overflow-x-auto">
+        <table className="table">
+          {/* head */}
+          <thead>
+            <tr>
+              <th>
+                <label>
+                  <input type="checkbox" className="checkbox" />
+                </label>
+              </th>
+              <th>ID</th>
+              <th>Name</th>
+              <th>Tags</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            {servers.map((server) => (
+              <ServerTableRow key={server.id} serverId={server.id}></ServerTableRow>
+            ))}
+          </tbody>
+          {/* foot */}
+          <tfoot>
+            <tr>
+              <th></th>
+              <th>ID</th>
+              <th>Name</th>
+              <th>Tags</th>
+              <th></th>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
     </div>
   );
 }
