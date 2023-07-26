@@ -18,7 +18,7 @@ export async function GET(request: Request, { params: { serverId }, }: { params:
   });
 
   const players = await serverConnection.getPlayers();
-  console.log(`Players: \n ${JSON.stringify(players)}`);
+  console.log(`Players: \n ${JSON.stringify({ players: players })}`);
 
-  return NextResponse.json(players);
+  return NextResponse.json({ players: players });
 }

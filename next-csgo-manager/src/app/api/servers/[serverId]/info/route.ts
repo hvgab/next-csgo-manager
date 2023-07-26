@@ -18,7 +18,5 @@ export async function GET(request: Request, { params: { serverId }, }: { params:
   });
 
   const info = await serverConnection.getInfo();
-  console.log(`Server Info: \n ${JSON.stringify(info)}`);
-
-  return NextResponse.json(info);
+  return NextResponse.json({ info: info });
 }

@@ -9,9 +9,9 @@ export default function MasterServerTable({ children }: { children: React.ReactN
               <input type="checkbox" className="checkbox" />
             </label>
           </th>
+          <th>IP</th>
           <th>Name</th>
-          <th>Job</th>
-          <th>Favorite Color</th>
+          <th>Game</th>
           <th></th>
         </tr>
       </thead>
@@ -20,9 +20,9 @@ export default function MasterServerTable({ children }: { children: React.ReactN
       <tfoot>
         <tr>
           <th></th>
+          <th>IP</th>
           <th>Name</th>
-          <th>Job</th>
-          <th>Favorite Color</th>
+          <th>Game</th>
           <th></th>
         </tr>
       </tfoot>

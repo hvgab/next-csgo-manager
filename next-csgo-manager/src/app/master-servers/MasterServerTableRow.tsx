@@ -56,6 +56,10 @@ export default function MasterServerTableRow({ key, ip, port }: { key: number; i
         <span className="badge badge-ghost badge-sm">{data.info.map}</span>
       </td>
       <td>{data.lastPing}</td>
+      <td>
+        {JSON.stringify(data.info.players, null, 4)}
+        {JSON.stringify(data.players, null, 4)}
+      </td>
       <th>
         <button className="btn btn-ghost btn-xs">details</button>
       </th>

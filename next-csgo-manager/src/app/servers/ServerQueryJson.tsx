@@ -2,33 +2,31 @@
 
 import { useState, useEffect } from "react";
 import CardSkeleton from "../components/skeletons/cardSkeleton";
+import useSWR from "swr";
+import fetcher from "@/app/lib/fetcher";
 
 export default function ServerQueryCard({ serverId }: { serverId: number }) {
-  const [serverData, setServerData] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    console.log("ServerDbCard serverId");
-    // console.log(serverId);
-    setIsLoading(true);
-    fetch(`/api/servers/${serverId}/query`)
-      .then((res) => res.json())
-      .then((data) => {
-        setServerData(data);
-        setIsLoading(false);
-      });
-  }, [serverId]);
+  const { data, error, isLoading } = useSWR(`/api/servers/${serverId}/query`, fetcher);
 
   if (isLoading) {
     return <CardSkeleton />;
   }
-  if (!serverData) {
-    return <div>Failed to load data</div>;
+  if (error) {
+    return (
+      <div>
+        <h2>Failed to load data</h2>
+        <pre>
+          <code>{JSON.stringify(error, null, 4)}</code>
+        </pre>
+      </div>
+    );
   }
 
   return (
-    <>
-      <pre>{JSON.stringify(serverData, null, 2)}</pre>
-    </>
+    <div>
+      <pre>
+        <code>{JSON.stringify(data, null, 2)}</code>
+      </pre>
+    </div>
   );
 }

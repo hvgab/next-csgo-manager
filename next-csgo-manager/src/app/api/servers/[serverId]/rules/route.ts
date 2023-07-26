@@ -21,5 +21,5 @@ export async function GET(request: Request, { params: { id }, }: { params: { id:
   console.log("rules");
   console.log(rules);
 
-  return NextResponse.json(rules);
+  return NextResponse.json({ rules: rules });
 }

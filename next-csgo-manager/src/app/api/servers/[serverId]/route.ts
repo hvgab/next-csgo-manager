@@ -7,7 +7,8 @@ export async function GET(request: Request, { params: { serverId }, }: { params:
     const result = await prisma.server.findUnique({
         where: {
             id: Number(serverId)
-        }
+        },
+        include: { owner: true, admins: true }
     });
 
     return NextResponse.json(result);

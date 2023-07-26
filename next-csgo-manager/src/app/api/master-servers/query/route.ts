@@ -31,8 +31,8 @@ export async function POST(request: Request) {
         mapWorkshopId = mapNameArray[1];
     }
 
-    // const players = await serverConnection.getPlayers();
-    const players = {}
+    const players = await serverConnection.getPlayers();
+    // const players = {}
 
     // const rules = await serverConnection.getRules();
     const rules = {};

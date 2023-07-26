@@ -1,6 +1,7 @@
 import "./globals.css";
 import { Inter } from "next/font/google";
 import Navbar from "./navbar";
+import AuthContext from "./components/AuthContext";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -13,8 +14,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       <body className={inter.className}>
-        <Navbar></Navbar>
-        <div className="my-4">{children}</div>
+        <AuthContext>
+          <Navbar></Navbar>
+          <div className="my-4">{children}</div>
+        </AuthContext>
       </body>
     </html>
   );

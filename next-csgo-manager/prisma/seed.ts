@@ -2,6 +2,8 @@ import { PrismaClient } from '@prisma/client'
 
 const prisma = new PrismaClient()
 
+const USER = { name: "SYSTEM" }
+
 const SERVERS = [
     {
         host: "theck1.no",
@@ -28,8 +30,16 @@ const SERVERS = [
 /**
  * For each server, create a Server record in the DB
  */
-function seedServer() {
-    Promise.all(SERVERS.map(server => prisma.server.create({ data: { host: server.host, port: server.port } })))
+async function seedServer() {
+    const system_user = await prisma.user.create({ data: { name: USER.name } })
+
+    Promise.all(
+        SERVERS.map(
+            server => prisma.server.create(
+                { data: { host: server.host, port: server.port, ownerUserId: system_user.id } }
+            )
+        )
+    )
         .then(() => console.info('[SEED] Succussfully create server records'))
         .catch(e => console.error('[SEED] Failed to create server records', e))
 }

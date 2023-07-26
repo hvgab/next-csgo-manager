@@ -4,7 +4,7 @@ import { prisma } from "../lib/database";
 import ServerTableRow from "./ServerTableRow";
 
 async function getServers() {
-  const servers = await prisma.server.findMany({});
+  const servers = await prisma.server.findMany({ include: { owner: true, admins: true } });
   return servers;
 }
 
@@ -25,13 +25,17 @@ export default async function ServerList() {
               </th>
               <th>ID</th>
               <th>Name</th>
+              <th>Map</th>
               <th>Tags</th>
+              <th>Players</th>
+              <th>Owner</th>
+              <th>Admins</th>
               <th></th>
             </tr>
           </thead>
           <tbody>
             {servers.map((server) => (
-              <ServerTableRow key={server.id} serverId={server.id}></ServerTableRow>
+              <ServerTableRow key={server.id} serverId={server.id} server={server}></ServerTableRow>
             ))}
           </tbody>
           {/* foot */}
@@ -40,7 +44,11 @@ export default async function ServerList() {
               <th></th>
               <th>ID</th>
               <th>Name</th>
+              <th>Map</th>
               <th>Tags</th>
+              <th>Players</th>
+              <th>Owner</th>
+              <th>Admins</th>
               <th></th>
             </tr>
           </tfoot>
