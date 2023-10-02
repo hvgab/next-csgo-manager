@@ -16,16 +16,23 @@ export default function ServerPublishedFileDetails({ serverId }: { serverId: num
   if (!data) return <div>No Workshop data</div>;
   console.log(JSON.stringify(data, "", 2));
 
-  if (data?.workshopId == null) {
+  console.log(`mapWorkshopId: ${data.mapWorkshopId}`);
+
+  if (data?.mapWorkshopId == null) {
     switch (data.info.map) {
       case "de_inferno":
         return <PublishedFileDetails workshopId={125438669}></PublishedFileDetails>;
         break;
-
+      case "cs_agency":
+        return <PublishedFileDetails workshopId={779309165}></PublishedFileDetails>;
+        break;
+      case "de_shortdust":
+        return <PublishedFileDetails workshopId={344476023}></PublishedFileDetails>;
+        break;
       default:
+        return <div>Default: {data.info.map}</div>;
         break;
     }
-    return <div>{data.info.map}</div>;
   }
   return <PublishedFileDetails workshopId={data.mapWorkshopId}></PublishedFileDetails>;
 }

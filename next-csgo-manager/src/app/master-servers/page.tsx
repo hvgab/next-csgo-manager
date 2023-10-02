@@ -3,6 +3,10 @@ import MasterServerTableRow from "./MasterServerTableRow";
 import useSWR from "swr";
 import fetcher from "@/app/lib/fetcher";
 
+BigInt.prototype["toJSON"] = function () {
+  return this.toString();
+};
+
 export default async function MasterServers() {
   const response = await fetch(`http://localhost:3000/api/master-servers`, { cache: "no-store" });
   const data = await response.json();

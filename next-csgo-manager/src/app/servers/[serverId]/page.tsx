@@ -49,6 +49,7 @@ export default async function ServerDetail({ params: { serverId } }: { params: {
           </p>
         </div>
 
+        <RconComponent serverId={serverId} />
         <br />
         <ServerPublishedFileDetails serverId={serverId} />
         <br />

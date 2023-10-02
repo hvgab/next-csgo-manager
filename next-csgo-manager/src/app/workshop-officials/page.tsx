@@ -1,4 +1,6 @@
 import type { InferGetServerSidePropsType, GetServerSideProps } from "next";
+import Link from "next/link";
+import PublishedFileDetails from "../components/steam/PublishedFileDetails";
 
 type Repo = {
   name: string;
@@ -22,13 +24,17 @@ export default async function Page() {
   const no_comp_maps = [];
   for (let index = 0; index < maps.length; index++) {
     const element = maps[index];
-    if (!element.title.includes("Compatibility Version")) {
+    if (!element.title.includes("Compatibility Version") && !element.title.includes("Comptability")) {
       no_comp_maps.push(element);
     }
   }
   return (
     <>
       <h1>Workshop Officals</h1>
+
+      {no_comp_maps.map((map) => (
+        <PublishedFileDetails workshopId={map.publishedfileid} key={map.publishedfileid}></PublishedFileDetails>
+      ))}
 
       <table className="table">
         <thead>

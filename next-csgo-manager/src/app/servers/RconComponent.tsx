@@ -1,17 +1,28 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
 import { flushSync } from "react-dom";
+import Image from "next/image";
+import { useSession } from "next-auth/react";
+import { DateTime } from "luxon";
+import useSWR from "swr";
+import fetcher from "@/app/lib/fetcher";
 
 export default function RconComponent({ serverId }: { serverId: number }) {
   console.log("RconComponent Start");
 
   // Variables
-  const [serverData, setServerData] = useState({ info: { name: "Loading" } });
+  // const [serverData, setServerData] = useState({ info: { name: "Loading" } });
   const [rconResponses, setRconResponses] = useState(["Rcon Response"]);
   const [rconCommandHistory, setRconCommandHistory] = useState([]);
   const [rconCommandHistoryId, setRconCommandHistoryId] = useState(1);
   const [firstStatusHasLoaded, setFirstStatusHasLoaded] = useState(false);
+  const { data: session } = useSession();
 
+  const { data: serverData, error: serverDataError } = useSWR("/api/servers/" + serverId, fetcher);
+  if (serverData) {
+    console.log("ServerData:::");
+    console.log(serverData);
+  }
   // Run "status" on page load as init data
   useEffect(() => {
     function doHandleCommand(rcon_command: string) {
@@ -45,7 +56,7 @@ export default function RconComponent({ serverId }: { serverId: number }) {
     const commandToHistory = {
       id: rconCommandHistoryId,
       senderType: "user",
-      sender: "Gabbeh",
+      sender: session.user.name,
       dateTime: Date.now().toString(),
       message: rcon_command,
     };
@@ -81,7 +92,7 @@ export default function RconComponent({ serverId }: { serverId: number }) {
     const responseToHistory = {
       id: rconCommandHistoryId + 1,
       senderType: "server",
-      sender: "Server",
+      sender: serverData?.info?.name,
       dateTime: Date.now().toString(),
       message: result.response,
     };
@@ -113,28 +124,50 @@ export default function RconComponent({ serverId }: { serverId: number }) {
 
   console.log("RconComponent End");
 
+  function relativeTime(unixSeconds) {
+    const myDateTime = DateTime.fromMillis(parseInt(unixSeconds));
+    return `${myDateTime.toISOTime({
+      suppressMilliseconds: true,
+      includeOffset: false,
+      suppressSeconds: true,
+    })} - ${myDateTime.toRelative()}`;
+  }
+
   return (
     <>
       <div className="mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8">
-        <h1>{serverData.info.name} Rcon</h1>
+        <h1>{serverData?.info?.name} Rcon</h1>
 
         <div id="chat">
           <h2>RCON Chat</h2>
           {rconCommandHistory.map((history) => (
-            <div key={history.id} id={`history-${history.id}`} className="chat chat-start">
+            <div
+              key={history.id}
+              id={`history-${history.id}`}
+              className={history.senderType == "server" ? "chat chat-start" : "chat chat-end"}
+            >
               <div className="chat-image avatar">
                 <div className="w-10 rounded-full">
-                  <img src="https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg" />
+                  <Image
+                    src={
+                      history.senderType == "user"
+                        ? session?.user?.image
+                        : "https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg"
+                    }
+                    alt="Server Avatar"
+                    width={20}
+                    height={20}
+                  />
                 </div>
               </div>
-              <div className="chat-header">
-                {history.sender} {history.id}
-                <time className="text-xs opacity-50">{history.dateTime}</time>
-              </div>
+              <div className="chat-header">{history.sender}</div>
               <div className="chat-bubble">
                 <pre>{history.message}</pre>
               </div>
-              <div className="chat-footer opacity-50">Delivered</div>
+              <div className="chat-footer opacity-50">
+                <time className="text-xs opacity-50">{relativeTime(history.dateTime)}</time>
+                {/* Delivered */}
+              </div>
             </div>
           ))}
         </div>

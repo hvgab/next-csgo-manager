@@ -3,34 +3,40 @@
 import { Server } from "@prisma/client";
 import Link from "next/link";
 import useSWR from "swr";
+import fetcher from "../lib/fetcher";
 
 export default function ServerTableRow({ serverId, server }: { serverId: number; server: Server }) {
-  const fetcher = (...args) => fetch(...args).then((res) => res.json());
+  // const fetcher = (...args) => fetch(...args).then((res) => res.json());
 
   const { data, error, isLoading } = useSWR(`/api/servers/${serverId}/query`, fetcher);
 
   const skeleton_text = <div className="h-2 w-16 bg-gray-500 rounded-full dark:bg-gray-700"></div>;
 
-  if (error)
-    return (
-      <tr key={serverId}>
-        <th>
-          <label>
-            <input type="checkbox" disabled className="checkbox" />
-          </label>
-        </th>
-        <td className="font-bold">{serverId}</td>
-        <td>Error</td>
-      </tr>
-    );
+  // if (error)
+  //   return (
+  //     <tr key={serverId}>
+  //       <th>
+  //         <label>
+  //           <input type="checkbox" disabled className="checkbox" />
+  //         </label>
+  //       </th>
+  //       <td className="font-bold">{serverId}</td>
+  //       <td>Error</td>
+  //     </tr>
+  //   );
 
   let has_error = false;
-  if (data && "error" in data) {
-    data.info = {};
-    data.info.name = data.error;
-    data.info.map = "";
-    data.info.keywords = [];
+  if (error) {
     has_error = true;
+    console.log(JSON.stringify(error));
+  }
+  if (data && "error" in data) {
+    has_error = true;
+    console.log(JSON.stringify(data));
+    // data.info = {};
+    // data.info.name = data.error;
+    // data.info.map = "";
+    // data.info.keywords = [];
   }
 
   return (
@@ -51,15 +57,15 @@ export default function ServerTableRow({ serverId, server }: { serverId: number;
         >
           <div className="flex items-center space-x-3">
             {data && !has_error ? <div className="badge badge-success badge-lg"></div> : null}
-            {isLoading ? <div className="badge badge-outline badge-lg"></div> : null}
+            {isLoading && !has_error ? <div className="badge badge-outline badge-lg"></div> : null}
             {has_error ? <div className="badge badge-error badge-lg"></div> : null}
 
             <div>
               <div className="font-bold">
                 {data && !data.error && data?.info?.name ? data.info.name : null}
-                {isLoading ? skeleton_text : null}
-                {has_error && data.error == "Response timeout." ? "Offline" : null}
-                {error ? "Error" : null}
+                {isLoading && !error ? skeleton_text : null}
+                {has_error && data?.error == "Response timeout." ? "Offline" : null}
+                {has_error && data?.error ? data.error : null}
               </div>
               <div className="text-sm opacity-50">
                 {server.host}:{server.port}
