@@ -11,7 +11,11 @@ import ServerPublishedFileDetails from "@/app/components/steam/ServerPublishedFi
 import useSWR from "swr";
 import ServerName from "@/app/components/ServerName";
 
-export default async function ServerDetail({ params: { serverId } }: { params: { serverId: number } }) {
+export default async function ServerDetail({
+  params: { serverId },
+}: {
+  params: { serverId: number };
+}) {
   const server = await prisma.server.findUnique({
     where: {
       id: Number(serverId),
@@ -44,7 +48,9 @@ export default async function ServerDetail({ params: { serverId } }: { params: {
           <p>
             Admins:{" "}
             {server.admins.length > 0
-              ? server.admins.map((admin) => <span>{admin.name}</span>).reduce((prev, curr) => [prev, ", ", curr])
+              ? server.admins
+                  .map((admin) => <span key={admin.id}>{admin.name}</span>)
+                  .reduce((prev, curr) => [prev, ", ", curr])
               : null}
           </p>
         </div>

@@ -5,7 +5,10 @@ import useSWR from "swr";
 import fetcher from "../lib/fetcher";
 
 export default function ServerQueryCard({ serverId }: { serverId: number }) {
-  const { data, error, isLoading } = useSWR(`/api/servers/${serverId}/query`, fetcher);
+  const { data, error, isLoading } = useSWR(
+    `/api/servers/${serverId}/info`,
+    fetcher
+  );
 
   if (isLoading) {
     return (
@@ -69,20 +72,30 @@ export default function ServerQueryCard({ serverId }: { serverId: number }) {
       <div className="bg-white max-w-sm rounded overflow-hidden shadow-lg">
         <div className="px-6 py-4">
           <div className="font-bold text-xl mb-2 text-gray-700 text-base">
-            <h3 className="mt-4 text-sm text-gray-700">{data?.info?.name ? data.info.name : null}</h3>
-            <p className="mt-1 text-lg font-medium text-gray-900">{data?.info?.map ? data.info.map : "-"}</p>
+            <h3 className="mt-4 text-sm text-gray-700">
+              {data?.info?.name ? data.info.name : null}
+            </h3>
+            <p className="mt-1 text-lg font-medium text-gray-900">
+              {data?.info?.map ? data.info.map : "-"}
+            </p>
             <p>Game {data?.info?.game ? data.info.game : null}</p>
             <p>Connect to {data?.info?.address ? data.info.address : null}</p>
-            <p>Workshop Map ? {data?.mapWorkshopId ? data.mapWorkshopId : null}</p>
+            <p>
+              Workshop Map ? {data?.mapWorkshopId ? data.mapWorkshopId : null}
+            </p>
             <p>Last ping {data?.lastPing ? data.lastPing : null}</p>
-            <p className="mt-1 text-s font-medium text-gray-900">{data.rcon_password}</p>
+            <p className="mt-1 text-s font-medium text-gray-900">
+              {data.rcon_password}
+            </p>
           </div>
           <pre>
             <code>{JSON.stringify(data, null, 4)}</code>
           </pre>
           {error ? (
             <pre>
-              <code className="text-red-500">{JSON.stringify(error, null, 2)}</code>
+              <code className="text-red-500">
+                {JSON.stringify(error, null, 2)}
+              </code>
             </pre>
           ) : null}
         </div>

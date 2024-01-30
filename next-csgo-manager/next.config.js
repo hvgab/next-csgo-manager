@@ -15,6 +15,14 @@ const nextConfig = {
         protocol: "https",
         hostname: "cdn.discordapp.com",
       },
+      {
+        protocol: "https",
+        hostname: "www.placekitten.com"
+      },
+      {
+        protocol: "http",
+        hostname: "www.placekitten.com"
+      }
     ],
   },
 };

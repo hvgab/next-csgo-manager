@@ -18,7 +18,10 @@ export default function RconComponent({ serverId }: { serverId: number }) {
   const [firstStatusHasLoaded, setFirstStatusHasLoaded] = useState(false);
   const { data: session } = useSession();
 
-  const { data: serverData, error: serverDataError } = useSWR("/api/servers/" + serverId, fetcher);
+  const { data: serverData, error: serverDataError } = useSWR(
+    "/api/servers/" + serverId,
+    fetcher
+  );
   if (serverData) {
     console.log("ServerData:::");
     console.log(serverData);
@@ -56,7 +59,7 @@ export default function RconComponent({ serverId }: { serverId: number }) {
     const commandToHistory = {
       id: rconCommandHistoryId,
       senderType: "user",
-      sender: session.user.name,
+      sender: session?.user?.name,
       dateTime: Date.now().toString(),
       message: rcon_command,
     };
@@ -96,7 +99,11 @@ export default function RconComponent({ serverId }: { serverId: number }) {
       dateTime: Date.now().toString(),
       message: result.response,
     };
-    setRconCommandHistory([...rconCommandHistory, commandToHistory, responseToHistory]);
+    setRconCommandHistory([
+      ...rconCommandHistory,
+      commandToHistory,
+      responseToHistory,
+    ]);
     setRconCommandHistoryId(rconCommandHistoryId + 2);
     // Scroll after DOM
     scrollToForm();
@@ -144,7 +151,11 @@ export default function RconComponent({ serverId }: { serverId: number }) {
             <div
               key={history.id}
               id={`history-${history.id}`}
-              className={history.senderType == "server" ? "chat chat-start" : "chat chat-end"}
+              className={
+                history.senderType == "server"
+                  ? "chat chat-start"
+                  : "chat chat-end"
+              }
             >
               <div className="chat-image avatar">
                 <div className="w-10 rounded-full">
@@ -165,7 +176,9 @@ export default function RconComponent({ serverId }: { serverId: number }) {
                 <pre>{history.message}</pre>
               </div>
               <div className="chat-footer opacity-50">
-                <time className="text-xs opacity-50">{relativeTime(history.dateTime)}</time>
+                <time className="text-xs opacity-50">
+                  {relativeTime(history.dateTime)}
+                </time>
                 {/* Delivered */}
               </div>
             </div>
@@ -194,10 +207,16 @@ export default function RconComponent({ serverId }: { serverId: number }) {
 
         {/* Premade Buttons */}
         <div className="flex flex-wrap items-center gap-2 my-5">
-          <button className="btn border-blue-200 bg-blue-200" onClick={handleCommandStatus}>
+          <button
+            className="btn border-blue-200 bg-blue-200"
+            onClick={handleCommandStatus}
+          >
             Status
           </button>
-          <button className="btn border-blue-200 bg-blue-200" onClick={handleCommandMaps}>
+          <button
+            className="btn border-blue-200 bg-blue-200"
+            onClick={handleCommandMaps}
+          >
             Maps
           </button>
         </div>

@@ -4,13 +4,32 @@ import { Server } from "@prisma/client";
 import Link from "next/link";
 import useSWR from "swr";
 import fetcher from "../lib/fetcher";
+import Image from "next/image";
+import {
+  Key,
+  ReactElement,
+  JSXElementConstructor,
+  ReactFragment,
+  PromiseLikeOfReactNode,
+} from "react";
 
-export default function ServerTableRow({ serverId, server }: { serverId: number; server: Server }) {
+export default function ServerTableRow({
+  serverId,
+  server,
+}: {
+  serverId: number;
+  server: Server;
+}) {
   // const fetcher = (...args) => fetch(...args).then((res) => res.json());
 
-  const { data, error, isLoading } = useSWR(`/api/servers/${serverId}/query`, fetcher);
+  const { data, error, isLoading } = useSWR(
+    `/api/servers/${serverId}/info`,
+    fetcher
+  );
 
-  const skeleton_text = <div className="h-2 w-16 bg-gray-500 rounded-full dark:bg-gray-700"></div>;
+  const skeleton_text = (
+    <div className="h-2 w-16 bg-gray-500 rounded-full dark:bg-gray-700"></div>
+  );
 
   // if (error)
   //   return (
@@ -56,15 +75,25 @@ export default function ServerTableRow({ serverId, server }: { serverId: number;
           className="transition ease-in-out delay-150 bg-blue-500 hover:-translate-y-1 hover:scale-110 hover:bg-indigo-500 duration-300"
         >
           <div className="flex items-center space-x-3">
-            {data && !has_error ? <div className="badge badge-success badge-lg"></div> : null}
-            {isLoading && !has_error ? <div className="badge badge-outline badge-lg"></div> : null}
-            {has_error ? <div className="badge badge-error badge-lg"></div> : null}
+            {data && !has_error ? (
+              <div className="badge badge-success badge-lg"></div>
+            ) : null}
+            {isLoading && !has_error ? (
+              <div className="badge badge-outline badge-lg"></div>
+            ) : null}
+            {has_error ? (
+              <div className="badge badge-error badge-lg"></div>
+            ) : null}
 
             <div>
               <div className="font-bold">
-                {data && !data.error && data?.info?.name ? data.info.name : null}
+                {data && !data.error && data?.info?.name
+                  ? data.info.name
+                  : null}
                 {isLoading && !error ? skeleton_text : null}
-                {has_error && data?.error == "Response timeout." ? "Offline" : null}
+                {has_error && data?.error == "Response timeout."
+                  ? "Offline"
+                  : null}
                 {has_error && data?.error ? data.error : null}
               </div>
               <div className="text-sm opacity-50">
@@ -79,16 +108,23 @@ export default function ServerTableRow({ serverId, server }: { serverId: number;
         <div className="flex items-center space-x-3 my-auto">
           <div className="avatar">
             <div className="mask mask-squircle w-12 h-12">
-              <img src="http://www.placekitten.com/250/250" alt="" />
+              <Image
+                src="http://www.placekitten.com/250/250"
+                alt=""
+                width={200}
+                height={200}
+              />
             </div>
           </div>
-          <div className="">{data?.info?.map ? data.info.map : skeleton_text}</div>
+          <div className="">
+            {data?.info?.map ? data.info.map : skeleton_text}
+          </div>
         </div>
       </td>
       {/* Tags */}
       <td>
         {data?.info?.keywords
-          ? data.info.keywords.map((keyword) => (
+          ? data.info.keywords.map((keyword: string) => (
               <span key={keyword} className="badge badge-neutral badge-sm mr-1">
                 {keyword}
               </span>
@@ -96,8 +132,12 @@ export default function ServerTableRow({ serverId, server }: { serverId: number;
           : null}
         {!data && isLoading ? (
           <>
-            <span className="badge badge-neutral badge-sm mr-1">{skeleton_text}</span>
-            <span className="badge badge-neutral badge-sm mr-1">{skeleton_text}</span>
+            <span className="badge badge-neutral badge-sm mr-1">
+              {skeleton_text}
+            </span>
+            <span className="badge badge-neutral badge-sm mr-1">
+              {skeleton_text}
+            </span>
           </>
         ) : null}
       </td>
@@ -110,7 +150,7 @@ export default function ServerTableRow({ serverId, server }: { serverId: number;
         <div className="flex items-center space-x-3 my-auto">
           <div className="avatar">
             <div className="mask mask-squircle w-12 h-12">
-              <img src={server.owner.image} alt="" />
+              <Image src={server.owner.image} alt="" width={200} height={200} />
             </div>
           </div>
           <div>{server.owner.name}</div>
@@ -123,7 +163,7 @@ export default function ServerTableRow({ serverId, server }: { serverId: number;
             <div key={admin.id} className="flex flex-auto space-x-1 mb-1">
               <div className="avatar">
                 <div className="mask mask-squircle w-6 h-6">
-                  <img src={admin.image} alt="" />
+                  <Image src={admin.image} alt="" width={200} height={200} />
                 </div>
               </div>
               <div className="items-center justify-center y">{admin.name}</div>
