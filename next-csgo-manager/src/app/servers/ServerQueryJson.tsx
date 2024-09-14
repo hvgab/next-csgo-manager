@@ -5,7 +5,7 @@ import CardSkeleton from "../components/skeletons/cardSkeleton";
 import useSWR from "swr";
 import fetcher from "@/app/lib/fetcher";
 
-export default function ServerQueryCard({ serverId }: { serverId: number }) {
+export default function ServerQueryCard({ serverId }: { serverId: string }) {
   const { data, error, isLoading } = useSWR(
     `/api/servers/${serverId}/info`,
     fetcher
@@ -14,6 +14,7 @@ export default function ServerQueryCard({ serverId }: { serverId: number }) {
   if (isLoading) {
     return <CardSkeleton />;
   }
+
   if (error) {
     return (
       <div>

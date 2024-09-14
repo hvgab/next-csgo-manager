@@ -8,9 +8,16 @@ import LoginButton from "./components/login-btn";
 
 const navigation = [
   { name: "Dashboard", href: "/", current: true },
+  { name: "Organizations", href: "/organizations" },
+  { name: "Cups", href: "/cups" },
+  { name: "Teams", href: "/teams" },
   { name: "Servers", href: "/servers", current: false },
   { name: "Master Servers", href: "/master-servers", current: false },
-  { name: "Workshop Official Maps", href: "/workshop-officials", current: false },
+  {
+    name: "Workshop Official Maps",
+    href: "/workshop-officials",
+    current: false,
+  },
 ];
 
 function classNames(...classes) {
@@ -18,7 +25,11 @@ function classNames(...classes) {
 }
 export default function Navbar() {
   const { data: session } = useSession();
-  let profile_dropdown: JSX.Element | ReactFragment | PromiseLikeOfReactNode | null = null;
+  let profile_dropdown:
+    | JSX.Element
+    | ReactFragment
+    | PromiseLikeOfReactNode
+    | null = null;
   if (session) {
     profile_dropdown = (
       <>
@@ -27,7 +38,11 @@ export default function Navbar() {
           <div>
             <Menu.Button className="flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
               <span className="sr-only">Open user menu</span>
-              <img className="h-8 w-8 rounded-full" src={session.user.image} alt="" />
+              <img
+                className="h-8 w-8 rounded-full"
+                src={session.user.image}
+                alt=""
+              />
             </Menu.Button>
           </div>
           <Transition
@@ -44,7 +59,10 @@ export default function Navbar() {
                 {({ active }) => (
                   <a
                     href="#"
-                    className={classNames(active ? "bg-gray-100" : "", "block px-4 py-2 text-sm text-gray-700")}
+                    className={classNames(
+                      active ? "bg-gray-100" : "",
+                      "block px-4 py-2 text-sm text-gray-700"
+                    )}
                   >
                     Your Profile
                   </a>
@@ -54,7 +72,10 @@ export default function Navbar() {
                 {({ active }) => (
                   <a
                     href="#"
-                    className={classNames(active ? "bg-gray-100" : "", "block px-4 py-2 text-sm text-gray-700")}
+                    className={classNames(
+                      active ? "bg-gray-100" : "",
+                      "block px-4 py-2 text-sm text-gray-700"
+                    )}
                   >
                     Settings
                   </a>
@@ -64,7 +85,10 @@ export default function Navbar() {
                 {({ active }) => (
                   <a
                     onClick={() => signOut()}
-                    className={classNames(active ? "bg-gray-100" : "", "block px-4 py-2 text-sm text-gray-700")}
+                    className={classNames(
+                      active ? "bg-gray-100" : "",
+                      "block px-4 py-2 text-sm text-gray-700"
+                    )}
                   >
                     Sign out
                   </a>
@@ -120,7 +144,9 @@ export default function Navbar() {
                         key={item.name}
                         href={item.href}
                         className={classNames(
-                          item.current ? "bg-gray-900 text-white" : "text-gray-300 hover:bg-gray-700 hover:text-white",
+                          item.current
+                            ? "bg-gray-900 text-white"
+                            : "text-gray-300 hover:bg-gray-700 hover:text-white",
                           "rounded-md px-3 py-2 text-sm font-medium"
                         )}
                         aria-current={item.current ? "page" : undefined}
@@ -153,7 +179,9 @@ export default function Navbar() {
                   as="a"
                   href={item.href}
                   className={classNames(
-                    item.current ? "bg-gray-900 text-white" : "text-gray-300 hover:bg-gray-700 hover:text-white",
+                    item.current
+                      ? "bg-gray-900 text-white"
+                      : "text-gray-300 hover:bg-gray-700 hover:text-white",
                     "block rounded-md px-3 py-2 text-base font-medium"
                   )}
                   aria-current={item.current ? "page" : undefined}

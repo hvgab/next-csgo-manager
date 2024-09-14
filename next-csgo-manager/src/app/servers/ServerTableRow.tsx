@@ -17,7 +17,7 @@ export default function ServerTableRow({
   serverId,
   server,
 }: {
-  serverId: number;
+  serverId: string;
   server: Server;
 }) {
   // const fetcher = (...args) => fetch(...args).then((res) => res.json());
@@ -67,7 +67,7 @@ export default function ServerTableRow({
         </label>
       </th>
       {/* ID */}
-      <td className="font-bold">{serverId}</td>
+      {/* <td className="font-bold">{serverId}</td> */}
       {/* Status Name IP */}
       <td>
         <Link
@@ -108,22 +108,23 @@ export default function ServerTableRow({
         <div className="flex items-center space-x-3 my-auto">
           <div className="avatar">
             <div className="mask mask-squircle w-12 h-12">
-              <Image
+              {/* <Image
                 src="http://www.placekitten.com/250/250"
                 alt=""
                 width={200}
                 height={200}
-              />
+              /> */}
             </div>
           </div>
           <div className="">
-            {data?.info?.map ? data.info.map : skeleton_text}
+            {/* {data?.info?.map ? data.info.map : skeleton_text} */}
+            {data?.info?.map}
           </div>
         </div>
       </td>
       {/* Tags */}
       <td>
-        {data?.info?.keywords
+        {/* {data?.info?.keywords
           ? data.info.keywords.map((keyword: string) => (
               <span key={keyword} className="badge badge-neutral badge-sm mr-1">
                 {keyword}
@@ -139,21 +140,45 @@ export default function ServerTableRow({
               {skeleton_text}
             </span>
           </>
-        ) : null}
+        ) : null} */}
+        {data?.info?.keywords.map((keyword: string) => (
+          <span key={keyword} className="badge badge-neutral badge-sm mr-1">
+            {keyword}
+          </span>
+        ))}
       </td>
       {/* Players */}
       <td>
-        {data?.info?.players?.online} / {data?.info?.players?.max}
+        {data?.info?.players ? (
+          <div>
+            {data?.info?.players?.online} / {data?.info?.players?.max}
+          </div>
+        ) : (
+          <div></div>
+        )}
       </td>
       {/* Owner */}
       <td>
         <div className="flex items-center space-x-3 my-auto">
           <div className="avatar">
-            <div className="mask mask-squircle w-12 h-12">
-              <Image src={server.owner.image} alt="" width={200} height={200} />
-            </div>
+            {server.owner?.image ? (
+              <div className="mask mask-squircle w-12 h-12">
+                {server.owner.image ? (
+                  <Image
+                    src={server.owner?.image}
+                    alt=""
+                    width={200}
+                    height={200}
+                  />
+                ) : (
+                  ""
+                )}
+              </div>
+            ) : (
+              <div></div>
+            )}
           </div>
-          <div>{server.owner.name}</div>
+          <div>{server.owner?.name}</div>
         </div>
       </td>
       {/* Admins */}
@@ -163,7 +188,11 @@ export default function ServerTableRow({
             <div key={admin.id} className="flex flex-auto space-x-1 mb-1">
               <div className="avatar">
                 <div className="mask mask-squircle w-6 h-6">
-                  <Image src={admin.image} alt="" width={200} height={200} />
+                  {admin.image ? (
+                    <Image src={admin.image} alt="" width={200} height={200} />
+                  ) : (
+                    ""
+                  )}
                 </div>
               </div>
               <div className="items-center justify-center y">{admin.name}</div>

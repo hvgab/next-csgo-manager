@@ -14,13 +14,17 @@ export default function ServerName({ server }: { server: Server }) {
       <span className="h-2.5 bg-gray-200 rounded-full dark:bg-gray-700 w-48 mb-4"></span>
     );
 
-  if (error) return;
-  <>
-    <span className="h-2.5  w-48 mb-4 text-red-400">{error?.info?.title}</span>
-    <pre>
-      <code>{JSON.stringify(error, null, 2)}</code>
-    </pre>
-  </>;
+  if (error)
+    return (
+      <>
+        <span className="h-2.5  w-48 mb-4 text-red-400">
+          {error?.info?.title}
+        </span>
+        <pre className="text-gray-500">
+          <code>{JSON.stringify(error, null, 2)}</code>
+        </pre>
+      </>
+    );
 
   return (
     <span>

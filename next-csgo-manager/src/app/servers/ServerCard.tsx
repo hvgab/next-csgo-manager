@@ -2,33 +2,24 @@
 
 import useSWR from "swr";
 
-const fetcher = (...args) => fetch(...args).then((res) => res.json());
+import fetcher from "../lib/fetcher";
 
 import Image from "next/image";
 import Link from "next/link";
+import { Server } from "@prisma/client";
 
-// import { mapNameToWorkshopId } from "./utils";
 
-export default async function ServerCard({ server }) {
-  // const [serverData, setServerData] = useState(null);
-  // const [serverQuery, setServerQuery] = useState(null);
-  // const [isLoading, setLoading] = useState(false);
 
-  // const [workshopId, setWorkshopId] = useState(null);
-  // const [workshop, setWorkshop] = useState(null);
+export default async function ServerCard({ server }: { server: Server }) {
+  const { data: serverData, error: serverDataError } = useSWR(
+    "/api/servers/" + server.id,
+    fetcher
+  );
 
-  // console.log(serverQuery.info.map);
-  // console.log(serverQuery.info.map.split("/"));
-  // console.log(serverQuery.info.map.split("/").length);
-
-  // if (serverQuery.info.map.split("/").length > 1) {
-  //   workshopId = await mapNameToWorkshopId(serverQuery.info.map);
-  //   workshop = await localGet(`api/steam/IPublishedFileService/GetDetails/${workshopId}`);
-  // }
-
-  const { data: serverData, error: serverDataError } = useSWR("/api/servers/" + server.id, fetcher);
-
-  const { data: serverQuery, error: serverQueryError } = useSWR("/api/servers/" + server.id + "/query", fetcher);
+  const { data: serverQuery, error: serverQueryError } = useSWR(
+    "/api/servers/" + server.id + "/query",
+    fetcher
+  );
 
   const { data: workshop, error: workshopDataError } = useSWR(
     () => `/api/steam/IPublishedFileService/GetDetails/${serverData.workshopId}`
@@ -49,7 +40,11 @@ export default async function ServerCard({ server }) {
         <div className="bg-white max-w-sm rounded overflow-hidden shadow-lg">
           {workshop !== null ? (
             <>
-              <img className="w-full" src={workshop.preview_url} alt={workshop.preview_url} />
+              <img
+                className="w-full"
+                src={workshop.preview_url}
+                alt={workshop.preview_url}
+              />
               <p>{workshop.title}</p>
               <p>{workshop.file_description}</p>
             </>
@@ -62,7 +57,9 @@ export default async function ServerCard({ server }) {
               <p className="mt-1 text-lg font-medium text-gray-900">
                 {server.name} {server.host}
               </p>
-              <p className="mt-1 text-s font-medium text-gray-900">{server.rcon_password}</p>
+              <p className="mt-1 text-s font-medium text-gray-900">
+                {server.rconPassword}
+              </p>
             </div>
           </div>
           <div className="px-6 pt-4 pb-2">

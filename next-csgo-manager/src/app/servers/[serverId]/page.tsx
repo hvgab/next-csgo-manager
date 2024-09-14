@@ -1,4 +1,5 @@
 import ServerCard from "../ServerCard";
+// import RconComponent from "../RconComponent";
 import RconComponent from "../RconComponent";
 import { prisma } from "../../lib/database";
 import { getServerQuery, localGet } from "@/app/lib/local_api";
@@ -10,15 +11,20 @@ import PublishedFileDetails from "@/app/components/steam/PublishedFileDetails";
 import ServerPublishedFileDetails from "@/app/components/steam/ServerPublishedFileDetails";
 import useSWR from "swr";
 import ServerName from "@/app/components/ServerName";
+import ServerMap from "@/app/components/ServerMap";
+import ServerGame from "@/app/components/ServerGame";
+import RawLog from "./components/rawLogComponent";
+import Image from "next/image";
+import ServerPlayers from "@/app/components/ServerPlayers";
 
 export default async function ServerDetail({
   params: { serverId },
 }: {
-  params: { serverId: number };
+  params: { serverId: string };
 }) {
   const server = await prisma.server.findUnique({
     where: {
-      id: Number(serverId),
+      id: String(serverId),
     },
     include: {
       owner: true,
@@ -26,44 +32,71 @@ export default async function ServerDetail({
     },
   });
 
+  if (server === null) {
+    return <div>Server is null</div>;
+  }
+
   return (
     <>
-      <section className="container mx-auto px-40">
+      {/* Server Header */}
+      <section className="bg-slate-800">
         {/* Title */}
-        <div className="flex flex-auto gap-4 justify-start bg-green-100 items-center">
-          <div className="text-4xl p-4 align-middle bg-yellow-100">
-            <span className="">#{server.id}</span>
-          </div>
-          <div className="flex flex-col">
-            <h1 className="mb-0 text-2xl font-bold">
-              <ServerName server={server}></ServerName>
-            </h1>
-            <h2 className="mb-0 text-lg text-neutral-600">
-              {server.host}:{server.port}
-            </h2>
+        <div className="container mx-auto px-4">
+          <div className="flex flex-auto gap-4 justify-between items-center ">
+            {/* <div className="text-4xl p-4 align-middle">
+            <div className="text-sm">Server</div>
+            <div className="">#{server.id}</div>
+          </div> */}
+            <div className="flex flex-col">
+              <h1 className="mb-0 text-2xl font-bold">
+                <ServerName server={server}></ServerName>
+              </h1>
+              <h2 className="mb-0 text-lg dark:text-slate-300">
+                {server.host}:{server.port}
+              </h2>
+            </div>
+            <div>
+              <div>
+                🕹️ <ServerGame server={server}></ServerGame>
+              </div>
+              <div>
+                🌍 <ServerMap server={server}></ServerMap>
+              </div>
+            </div>
+            <div>
+              <div>🛡️ Vac Protected</div>
+              <div>
+                👥 <ServerPlayers serverId={server.id} /> Players
+              </div>
+            </div>
+            <div>
+              <div>{server.owner.name}</div>
+              <div>
+                {server.admins.length > 0
+                  ? server.admins
+                      .map((admin) => <span key={admin.id}>{admin.name}</span>)
+                      .join(", ")
+                  : null}
+              </div>
+            </div>
           </div>
         </div>
-        <div className="flex flex-auto justify-around bg-slate-600 text-slate-300 rounded mb-6">
-          <p>Owner: {server.owner.name}</p>
-          <p>
-            Admins:{" "}
-            {server.admins.length > 0
-              ? server.admins
-                  .map((admin) => <span key={admin.id}>{admin.name}</span>)
-                  .reduce((prev, curr) => [prev, ", ", curr])
-              : null}
-          </p>
-        </div>
-
-        <RconComponent serverId={serverId} />
-        <br />
-        <ServerPublishedFileDetails serverId={serverId} />
-        <br />
-        <br />
-        <ServerQueryCard serverId={serverId} />
-        <br />
-        <ServerQueryJson serverId={serverId}></ServerQueryJson>
       </section>
+
+      <div>
+        <a
+          href={`steam://connect/${server.host}:${server.port}/${server.joinPassword}`}
+          className="bg-primary px-4 py-2 rounded"
+        >
+          Join {server.host}:{server.port}!
+        </a>
+      </div>
+
+      <hr className="my-12" />
+      <p>Debugs</p>
+      <br />
+
+      <ServerQueryJson serverId={serverId} />
     </>
   );
 }

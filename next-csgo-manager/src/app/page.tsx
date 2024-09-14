@@ -1,11 +1,15 @@
 import Image from "next/image";
 import LoginButton from "./components/login-btn";
+import { AuthUser } from "./authUserComponent";
 
 export default function Home() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
+    <main className="flex  flex-col items-center p-24">
+      LoginButton
       <LoginButton></LoginButton>
-
+      AuthUser
+      <AuthUser></AuthUser>
+      <div className="mb-32"></div>
       <div className="mb-32 grid text-center lg:mb-0 lg:grid-cols-4 lg:text-left">
         <a
           href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
@@ -53,7 +57,9 @@ export default function Home() {
               -&gt;
             </span>
           </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>Explore the Next.js 13 playground.</p>
+          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
+            Explore the Next.js 13 playground.
+          </p>
         </a>
 
         <a
