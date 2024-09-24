@@ -1,14 +1,16 @@
 import MasterServerTable from "./MasterServerTable";
 import MasterServerTableRow from "./MasterServerTableRow";
 import useSWR from "swr";
-import fetcher from "@/app/lib/fetcher";
+import fetcher from "@/lib/fetcher";
 
 BigInt.prototype["toJSON"] = function () {
   return this.toString();
 };
 
 export default async function MasterServers() {
-  const response = await fetch(`http://localhost:3000/api/master-servers`, { cache: "no-store" });
+  const response = await fetch(`http://localhost:3000/api/master-servers`, {
+    cache: "no-store",
+  });
   const data = await response.json();
   const servers = data;
   // const { data } = useSWR(`http://localhost:3000/api/master-servers`);
@@ -20,7 +22,11 @@ export default async function MasterServers() {
         <div className="overflow-x-auto">
           <MasterServerTable>
             {data.map((server) => (
-              <MasterServerTableRow key={server.key} ip={server.ip} port={server.port}></MasterServerTableRow>
+              <MasterServerTableRow
+                key={server.key}
+                ip={server.ip}
+                port={server.port}
+              ></MasterServerTableRow>
             ))}
           </MasterServerTable>
         </div>

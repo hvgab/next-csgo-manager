@@ -1,6 +1,6 @@
 import type { InferGetServerSidePropsType, GetServerSideProps } from "next";
 import Link from "next/link";
-import PublishedFileDetails from "../components/steam/PublishedFileDetails";
+import PublishedFileDetails from "../../components/steam/PublishedFileDetails";
 
 type Repo = {
   name: string;
@@ -10,10 +10,13 @@ type Repo = {
 async function getData() {
   const steamId = "76561198082857351";
   // const res = await fetch(`http://localhost:3000/api/steam/IPublishedFileService/GetUserFiles/${steamId}`, {
-  const res = await fetch(`http://localhost:3000/api/steam/workshop-maps-official`, {
-    // cache: "no-store",
-    cache: "no-cache",
-  });
+  const res = await fetch(
+    `http://localhost:3000/api/steam/workshop-maps-official`,
+    {
+      // cache: "no-store",
+      cache: "no-cache",
+    }
+  );
   const maps = await res.json();
   console.log(`maps.length: ${maps.length}`);
   return maps;
@@ -24,7 +27,10 @@ export default async function Page() {
   const no_comp_maps = [];
   for (let index = 0; index < maps.length; index++) {
     const element = maps[index];
-    if (!element.title.includes("Compatibility Version") && !element.title.includes("Comptability")) {
+    if (
+      !element.title.includes("Compatibility Version") &&
+      !element.title.includes("Comptability")
+    ) {
       no_comp_maps.push(element);
     }
   }
@@ -33,7 +39,10 @@ export default async function Page() {
       <h1>Workshop Officals</h1>
 
       {no_comp_maps.map((map) => (
-        <PublishedFileDetails workshopId={map.publishedfileid} key={map.publishedfileid}></PublishedFileDetails>
+        <PublishedFileDetails
+          workshopId={map.publishedfileid}
+          key={map.publishedfileid}
+        ></PublishedFileDetails>
       ))}
 
       <table className="table">

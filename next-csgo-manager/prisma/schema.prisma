@@ -11,13 +11,96 @@ datasource db {
 }
 
 model Server {
-  id            Int     @id @default(autoincrement())
-  host          String
-  port          Int
-  rcon_password String?
-  owner         User    @relation("ServerUserOwner", fields: [ownerUserId], references: [id])
-  admins        User[]  @relation("ServerUserAdmins")
-  ownerUserId   String
+  id           String  @id @default(cuid())
+  host         String
+  port         Int
+  rconPassword String?
+  owner        User    @relation("ServerUserOwner", fields: [ownerUserId], references: [id])
+  ownerUserId  String
+  admins       User[]  @relation("ServerUserAdmins")
+  match        Match[]
+}
+
+model Team {
+  id   String  @id @default(cuid())
+  name String
+  tag  String  @default("")
+  flag String  @default("NO")
+  logo String?
+
+  player1       String?
+  player2       String?
+  player3       String?
+  player4       String?
+  player5       String?
+  player6       String?
+  player7       String?
+  matchAsWinner Match[]         @relation("MatchTeamAsWinner")
+  matchAsTeam1  Match[]         @relation("MatchTeamAsTeam1")
+  matchAsTeam2  Match[]         @relation("MatchTeamAsTeam2")
+  playersOnTeam PlayersOnTeam[]
+}
+
+model PlayersOnTeam {
+  team       Team     @relation(fields: [teamId], references: [id])
+  player     User     @relation(fields: [userId], references: [id])
+  assignedAt DateTime @default(now())
+  teamId     String
+  userId     String
+
+  @@id([teamId, userId])
+}
+
+model Match {
+  id             String    @id @default(cuid())
+  gameServerId   String?
+  matchTitle     String?   @default("")
+  matchDateTime  DateTime?
+  clinchSeries   Boolean   @default(true)
+  numMaps        Int       @default(3)
+  playersPerTeam Int       @default(5)
+  skipVeto       Boolean   @default(false)
+  maplist        String    @default("")
+  team1Id        String?
+  team2Id        String?
+  seriesType     String
+  winnerId       String?
+  pluginVersion  String?   @default("unknown")
+  forfeit        Boolean?  @default(false)
+  cancelled      Boolean?  @default(false)
+  finished       Boolean?  @default(false)
+  startTime      DateTime?
+  endTime        DateTime?
+  maxMaps        Int?
+  title          String?   @default("")
+  apiKey         String?   @default("")
+  vetoMappool    String?   @default("")
+  team1Score     Int?
+  team2Score     Int?
+
+  team1      Team?   @relation("MatchTeamAsTeam1", fields: [team1Id], references: [id])
+  team2      Team?   @relation("MatchTeamAsTeam2", fields: [team2Id], references: [id])
+  teamWinner Team?   @relation("MatchTeamAsWinner", fields: [winnerId], references: [id])
+  gameServer Server? @relation(fields: [gameServerId], references: [id])
+}
+
+model Organization {
+  id      String @id @default(cuid())
+  name    String
+  owner   User   @relation(fields: [ownerId], references: [id])
+  ownerId String
+  admins  User[] @relation("OrganizationAdmins")
+  cup     Cup[]
+}
+
+model Cup {
+  id             String        @id @default(cuid())
+  name           String
+  organization   Organization? @relation(fields: [organizationId], references: [id])
+  organizationId String?
+  owner          User          @relation(fields: [ownerId], references: [id])
+  ownerId        String
+  admins         User[]        @relation("CupAdmins")
 }
 
 // AUTH
@@ -71,8 +154,13 @@ model User {
   accounts      Account[]
   sessions      Session[]
 
-  adminServers Server[] @relation("ServerUserAdmins")
-  ownerServers Server[] @relation("ServerUserOwner")
+  adminServers           Server[]        @relation("ServerUserAdmins")
+  ownerServers           Server[]        @relation("ServerUserOwner")
+  organizationSetAsOwner Organization[]
+  organizationSetAsAdmin Organization[]  @relation("OrganizationAdmins")
+  cupSetAsOwner          Cup[]
+  cupSetAsAdmin          Cup[]           @relation("CupAdmins")
+  onTeams                PlayersOnTeam[]
 }
 
 model VerificationToken {
