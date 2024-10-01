@@ -21,6 +21,7 @@ const nextConfig = {
       },
     ],
   },
+  pageExtensions: ["page.tsx", "tsx"],
 };
 
 module.exports = nextConfig;

@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "../../../../../lib/database";
 import { Server, RCON, MasterServer } from "@fabricio-191/valve-server-query";
 
@@ -8,7 +8,7 @@ BigInt.prototype["toJSON"] = function () {
 
 // GET /api/servers/[id]/players
 export async function GET(
-  request: Request,
+  request: NextRequest,
   { params: { serverId } }: { params: { serverId: string } }
 ) {
   const server = await prisma.server.findUnique({
@@ -50,7 +50,20 @@ export async function GET(
   console.log("players");
   console.log(players);
 
-  console.log(`Players: \n ${JSON.stringify({ players: players })}`);
+  // Remove Bots
+  console.log(request.nextUrl.searchParams);
+  if (request.nextUrl.searchParams.get("includeBots") != "1") {
+    players = players.filter(isNotBot);
+  }
+  console.log(`Players: \n ${JSON.stringify(players)}`);
 
-  return NextResponse.json({ players: players });
+  return NextResponse.json(players);
+}
+
+function isBot(player: ValveServerPlayerInfo) {
+  return player.index == 0 && player.name == "";
+}
+
+function isNotBot(player: ValveServerPlayerInfo) {
+  return player.index != 0 && player.name != "";
 }

@@ -56,10 +56,19 @@ export async function getServerInfo(
 }
 
 export async function getServerPlayerInfo(
-  id: string
-): Promise<{ info: ValveServer.PlayerInfo }> {
+  id: string,
+  includeBots?: boolean
+): Promise<ValveServer.PlayerInfo[]> {
   console.log("getServerPlayers");
-  const res = await fetch(`http://localhost:3000/api/servers/${id}/players`);
+
+  var searchParams = new URLSearchParams();
+  if (includeBots === true) {
+    searchParams.append("includeBots", "1");
+  }
+  const url = `http://localhost:3000/api/servers/${id}/players`;
+  const fetchUrl = url + "?" + searchParams.toString();
+  console.log("fetchUrl: ", fetchUrl);
+  const res = await fetch(fetchUrl);
   // The return value is *not* serialized
   // You can return Date, Map, Set, etc.
 

@@ -39,6 +39,7 @@ import {
   Home,
   LineChart,
   ListFilter,
+  Mail,
   Map,
   MoreVertical,
   Package,
@@ -103,6 +104,10 @@ import ServerInfoJsonCard from "../components/ServerInfoJsonCard";
 import { Suspense } from "react";
 import { Menubar } from "@/components/ui/menubar";
 import ServerPlayerInfoJsonCard from "../components/server-players-json-card";
+import ServerAdminMapsComponent from "../components/MapsComponent";
+import { SiDiscord, SiSteam } from "@icons-pack/react-simple-icons";
+import { ServerPlayerCountChart } from "../components/ServerPlayerCountChart";
+import { ServerPlayerCountRadarChart } from "../components/ServerPlayerCountRadarChart";
 
 // import { ServerPlayerInfoJsonCard } from "../components/server-players-json-card";
 
@@ -123,9 +128,12 @@ export default async function ServerDetail({
     },
   });
 
+  if (!server) return <></>;
+
   const info = await getServerInfo(serverId);
 
   const players = await getServerPlayerInfo(serverId);
+  console.log(players);
 
   return (
     <>
@@ -171,6 +179,7 @@ export default async function ServerDetail({
           </div>
           <main className="grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8 lg:grid-cols-3 xl:grid-cols-3">
             {/* Col Main */}
+
             <div className="grid auto-rows-max items-start gap-4 md:gap-8 lg:col-span-2">
               {/* Mini Status Boxes */}
               <div className="grid auto-rows-1 items-start gap-2 sm:grid-cols-5 grid-cols-3">
@@ -189,11 +198,13 @@ export default async function ServerDetail({
                 {/* Players */}
                 <Card className="p-2">
                   <CardHeader className="p-0">
-                    <CardTitle className="text-sm">Players</CardTitle>
+                    <CardTitle className="text-sm">
+                      <a href={`/servers/${server.id}/players`}>Players</a>
+                    </CardTitle>
                   </CardHeader>
                   <CardContent className="p-0">
                     <div className="flex items-center text-muted-foreground">
-                      <Users className="h-4" />
+                      <Users width={16} height={16} className="mr-1" />
                       <span>
                         {info.info.players.online}/{info.info.players.max}
                       </span>
@@ -255,6 +266,43 @@ export default async function ServerDetail({
                   </CardContent>
                 </Card>
               </div>
+              {/* RCON */}
+              <div className="grid gap-4">
+                <Card>
+                  <CardHeader className="bg-muted/50">
+                    <CardTitle>
+                      <a href={`/servers/${server.id}/rcon`}></a>
+                      RCON
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="py-4">
+                    <pre>$ status</pre>
+                    <pre>&gt; running</pre>
+                    <div className="mt-4 flex items-baseline gap-2">
+                      <Input className=""></Input>
+                      <Button>Submit</Button>
+                    </div>
+                    <div className="mt-4 flex items-baseline gap-2">
+                      <Button variant={"outline"}>Status</Button>
+                      <Button variant={"secondary"}>Get5 Status</Button>
+                    </div>
+                  </CardContent>
+                  {/* <CardFooter></CardFooter> */}
+                </Card>
+              </div>
+              {/* Maps */}
+              <div className="grid grid-cols-1">
+                <Card>
+                  <CardHeader className="bg-muted/50">
+                    <CardTitle>Maps</CardTitle>
+                  </CardHeader>
+                  <CardContent className="py-4">
+                    <ServerAdminMapsComponent></ServerAdminMapsComponent>
+                  </CardContent>
+                  {/* <CardFooter></CardFooter> */}
+                </Card>
+              </div>
+              {/* Matches */}
               <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-2 xl:grid-cols-4">
                 <Card className="sm:col-span-2" x-chunk="dashboard-05-chunk-0">
                   <CardHeader className="pb-3">
@@ -268,7 +316,7 @@ export default async function ServerDetail({
                     <Button>Create New Match</Button>
                   </CardFooter>
                 </Card>
-                <Card x-chunk="dashboard-05-chunk-1">
+                {/* <Card x-chunk="dashboard-05-chunk-1">
                   <CardHeader className="pb-2">
                     <CardDescription>This Week</CardDescription>
                     <CardTitle className="text-4xl">$1,329</CardTitle>
@@ -281,8 +329,9 @@ export default async function ServerDetail({
                   <CardFooter>
                     <Progress value={25} aria-label="25% increase" />
                   </CardFooter>
-                </Card>
-                <Card x-chunk="dashboard-05-chunk-2">
+                </Card> */}
+                <ServerPlayerCountRadarChart></ServerPlayerCountRadarChart>
+                {/* <Card x-chunk="dashboard-05-chunk-2">
                   <CardHeader className="pb-2">
                     <CardDescription>This Month</CardDescription>
                     <CardTitle className="text-4xl">$5,329</CardTitle>
@@ -295,8 +344,12 @@ export default async function ServerDetail({
                   <CardFooter>
                     <Progress value={12} aria-label="12% increase" />
                   </CardFooter>
-                </Card>
+                </Card> */}
+                <ServerPlayerCountChart></ServerPlayerCountChart>
               </div>
+              {/* <ServerPlayerCountChart></ServerPlayerCountChart> */}
+              {/* <ServerPlayerCountRadarChart></ServerPlayerCountRadarChart> */}
+              {/* Week */}
               <Tabs defaultValue="week">
                 <div className="flex items-center">
                   <TabsList>
@@ -549,6 +602,7 @@ export default async function ServerDetail({
                 </TabsContent>
               </Tabs>
             </div>
+
             <div>
               {/* Players Card */}
               <Card className="overflow-hidden mb-4">
@@ -597,9 +651,71 @@ export default async function ServerDetail({
                 <CardContent className="p-6 text-sm">
                   <div className="grid gap-3">
                     <div className="font-semibold">Players Online</div>
-                    <Separator className="my-2" />
                     <ul className="grid gap-3">
-                      {players.players.map((player) => (
+                      {players &&
+                        players &&
+                        players.map((player) => (
+                          <li
+                            key={player.index}
+                            className="flex items-center justify-between"
+                          >
+                            <span>{player.name || "bot"}</span>
+                            <span className="text-muted-foreground">
+                              {player.score}
+                            </span>
+                            <span className="text-muted-foreground">
+                              {player.timeOnline.hours}h
+                              {player.timeOnline.minutes}m
+                              {player.timeOnline.seconds}s
+                            </span>
+                            <div>
+                              <Button size={"sm"}>Kick</Button>
+                              <Button variant={"destructive"} size={"sm"}>
+                                Ban
+                              </Button>
+                            </div>
+                          </li>
+                        ))}
+                    </ul>
+                  </div>
+
+                  <Separator className="my-4" />
+
+                  <div className="grid gap-3">
+                    <div className="font-semibold">Players Offline</div>
+                    <ul className="grid gap-3">
+                      {players &&
+                        players.map((player) => (
+                          <li
+                            key={player.index}
+                            className="flex items-center justify-between"
+                          >
+                            <span>{player.name || "bot"}</span>
+                            <span className="text-muted-foreground">
+                              {player.score}
+                            </span>
+                            <span className="text-muted-foreground">
+                              {player.timeOnline.hours}h
+                              {player.timeOnline.minutes}m
+                              {player.timeOnline.seconds}s
+                            </span>
+                            <div>
+                              <Button size={"sm"}>Kick</Button>
+                              <Button variant={"destructive"} size={"sm"}>
+                                Ban
+                              </Button>
+                            </div>
+                          </li>
+                        ))}
+                    </ul>
+                  </div>
+
+                  <Separator className="my-4" />
+
+                  <div className="grid gap-3">
+                    <div className="font-semibold">Players Banned</div>
+                    <ul className="grid gap-3">
+                      {players.map((player) => (
                         <li
                           key={player.index}
                           className="flex items-center justify-between"
@@ -623,46 +739,143 @@ export default async function ServerDetail({
                       ))}
                     </ul>
                   </div>
-                  <Separator className="my-4" />
-                  <div>
-                    <pre>
-                      <code>{JSON.stringify(players, null, 2)}</code>
-                    </pre>
+                </CardContent>
+                <CardFooter className="flex flex-row items-center border-t bg-muted/50 px-6 py-3">
+                  <div className="text-xs text-muted-foreground">
+                    Updated <time dateTime="2023-11-23">November 23, 2023</time>
                   </div>
-                  <Separator className="my-4" />
+                  <Pagination className="ml-auto mr-0 w-auto">
+                    <PaginationContent>
+                      <PaginationItem>
+                        <Button
+                          size="icon"
+                          variant="outline"
+                          className="h-6 w-6"
+                        >
+                          <ChevronLeft className="h-3.5 w-3.5" />
+                          <span className="sr-only">Previous Order</span>
+                        </Button>
+                      </PaginationItem>
+                      <PaginationItem>
+                        <Button
+                          size="icon"
+                          variant="outline"
+                          className="h-6 w-6"
+                        >
+                          <ChevronRight className="h-3.5 w-3.5" />
+                          <span className="sr-only">Next Order</span>
+                        </Button>
+                      </PaginationItem>
+                    </PaginationContent>
+                  </Pagination>
+                </CardFooter>
+              </Card>
+              {/* Admins Card */}
+              <Card className="overflow-hidden mb-4">
+                <CardHeader className="flex flex-row items-start bg-muted/50">
+                  <div className="grid gap-0.5">
+                    <CardTitle className="group flex items-center gap-2 text-lg">
+                      Admins
+                      <Button
+                        size="icon"
+                        variant="outline"
+                        className="h-6 w-6 opacity-0 transition-opacity group-hover:opacity-100"
+                      >
+                        <Copy className="h-3 w-3" />
+                        <span className="sr-only">Copy Order ID</span>
+                      </Button>
+                    </CardTitle>
+                    <CardDescription>Date: November 23, 2023</CardDescription>
+                  </div>
+                  <div className="ml-auto flex items-center gap-1">
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button
+                          size="icon"
+                          variant="outline"
+                          className="h-8 w-8"
+                        >
+                          <MoreVertical className="h-3.5 w-3.5" />
+                          <span className="sr-only">More</span>
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuItem>Edit</DropdownMenuItem>
+                        <DropdownMenuItem>Export</DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem>Trash</DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </div>
+                </CardHeader>
+                <CardContent className="p-6 text-sm">
                   <div className="grid gap-3">
-                    <div className="font-semibold">Customer Information</div>
-                    <dl className="grid gap-3">
+                    <div className="font-semibold">Owner</div>
+
+                    <dl key={server.owner.id} className="grid gap-3">
                       <div className="flex items-center justify-between">
-                        <dt className="text-muted-foreground">Customer</dt>
-                        <dd>Liam Johnson</dd>
+                        <dt className="text-muted-foreground">Name</dt>
+                        <dd>{server.owner.name}</dd>
                       </div>
                       <div className="flex items-center justify-between">
                         <dt className="text-muted-foreground">Email</dt>
                         <dd>
-                          <a href="mailto:">liam@acme.com</a>
+                          <a href="mailto:">{server.owner.email}</a>
                         </dd>
                       </div>
                       <div className="flex items-center justify-between">
-                        <dt className="text-muted-foreground">Phone</dt>
+                        <dt className="text-muted-foreground">Discord</dt>
                         <dd>
-                          <a href="tel:">+1 234 567 890</a>
+                          <a href="#">@Gabbeh#1234</a>
+                        </dd>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <dt className="text-muted-foreground">Steam</dt>
+                        <dd>
+                          <a href="#">steamprofile/Gabbeh</a>
                         </dd>
                       </div>
                     </dl>
                   </div>
-                  <Separator className="my-4" />
-                  <div className="grid gap-3">
-                    <div className="font-semibold">Payment Information</div>
-                    <dl className="grid gap-3">
-                      <div className="flex items-center justify-between">
-                        <dt className="flex items-center gap-1 text-muted-foreground">
-                          <CreditCard className="h-4 w-4" />
-                          Visa
-                        </dt>
-                        <dd>**** **** **** 4532</dd>
-                      </div>
-                    </dl>
+
+                  {/* Admins */}
+                  <div className="grid gap-3 mt-6">
+                    <div className="font-semibold">Admins</div>
+
+                    {server?.admins.map((admin) => (
+                      <dl
+                        key={admin.id}
+                        className="grid gap-3 pb-4 last:pb-0 border-b-2 last:border-b-0"
+                      >
+                        <div className="flex items-center justify-between">
+                          <dt className="flex items-center gap-1 text-muted-foreground">
+                            <span className="w-4 h-4"></span>
+                            User
+                          </dt>
+                          <dd>
+                            <a href={`/profile/${admin.id}`}>{admin.name}</a>
+                          </dd>
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <dt className="flex items-center gap-1 text-muted-foreground">
+                            <SiDiscord className="text-muted-foreground h-4 w-4" />{" "}
+                            Discord
+                          </dt>
+                          <dd>
+                            <a href="#">@Gabbeh#1234</a>
+                          </dd>
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <dt className="flex items-center gap-1 text-muted-foreground">
+                            <SiSteam className="text-muted-foreground h-4 w-4" />
+                            Steam
+                          </dt>
+                          <dd>
+                            <a href="#">steamprofile/Gabbeh</a>
+                          </dd>
+                        </div>
+                      </dl>
+                    ))}
                   </div>
                 </CardContent>
                 <CardFooter className="flex flex-row items-center border-t bg-muted/50 px-6 py-3">
@@ -697,7 +910,7 @@ export default async function ServerDetail({
               </Card>
             </div>
           </main>
-          <div className="grid gap-4 grid-cols-3 p-4 sm:px-6">
+          <div className="grid flex-1 gap-4 grid-cols-3 p-4 sm:px-6">
             <ServerInfoJsonCard serverId={serverId} />
             <ServerPlayerInfoJsonCard serverId={serverId} />
           </div>
