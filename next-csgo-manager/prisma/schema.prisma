@@ -10,6 +10,29 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+
+model Team {
+  id              String   @id @default(cuid())
+  name            String
+  tag             String
+  flag            String
+  logo            String
+
+  players         Player[]
+  cups            Cup[]    @relation("TeamCups")
+  matchesAsTeam1  Match[]  @relation("Team1Matches")
+  matchesAsTeam2  Match[]  @relation("Team2Matches")
+  matchesAsWinner Match[]  @relation("WinnerTeam")
+}
+
+model Player {
+  id       String  @id @default(cuid())
+  nickname String
+  steamId  String
+  Team     Team?   @relation(fields: [teamId], references: [id])
+  teamId   String?
+}
+
 model Server {
   id           String  @id @default(cuid())
   host         String
@@ -19,26 +42,6 @@ model Server {
   ownerUserId  String
   admins       User[]  @relation("ServerUserAdmins")
   match        Match[]
-}
-
-model Team {
-  id   String  @id @default(cuid())
-  name String
-  tag  String  @default("")
-  flag String  @default("NO")
-  logo String?
-
-  player1       String?
-  player2       String?
-  player3       String?
-  player4       String?
-  player5       String?
-  player6       String?
-  player7       String?
-  matchAsWinner Match[]         @relation("MatchTeamAsWinner")
-  matchAsTeam1  Match[]         @relation("MatchTeamAsTeam1")
-  matchAsTeam2  Match[]         @relation("MatchTeamAsTeam2")
-  playersOnTeam PlayersOnTeam[]
 }
 
 model PlayersOnTeam {
@@ -101,19 +104,8 @@ model Cup {
   owner          User          @relation(fields: [ownerId], references: [id])
   ownerId        String
   admins         User[]        @relation("CupAdmins")
+  teams Team[] @relation("TeamCups")
 }
-
-// AUTH
-// datasource db {
-//   provider = "postgresql"
-//   url      = env("DATABASE_URL")
-//   shadowDatabaseUrl = env("SHADOW_DATABASE_URL") // Only needed when using a cloud provider that doesn't support the creation of new databases, like Heroku. Learn more: https://pris.ly/d/migrate-shadow
-// }
-
-// generator client {
-//   provider        = "prisma-client-js"
-//   previewFeatures = ["referentialActions"] // You won't need this in Prisma 3.X or higher.
-// }
 
 model Account {
   id                String  @id @default(cuid())
@@ -169,4 +161,23 @@ model VerificationToken {
   expires    DateTime
 
   @@unique([identifier, token])
+}
+
+model RconCommandRequest {
+  id                  String                @id @default(cuid())
+  userId              String
+  user                User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  serverId            String
+  server              Server                @relation(fields: [serverId], references: [id], onDelete: Cascade)
+  request             String // The command the user sends
+  RconCommandResponse RconCommandResponse[]
+}
+
+model RconCommandResponse {
+  id        String             @id @default(cuid())
+  serverId  String
+  server    Server             @relation(fields: [serverId], references: [id], onDelete: Cascade)
+  requestId String
+  request   RconCommandRequest @relation(fields: [requestId], references: [id], onDelete: Cascade)
+  response  String
 }

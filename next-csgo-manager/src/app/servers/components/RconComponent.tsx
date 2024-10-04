@@ -65,7 +65,7 @@ export default function RconComponent({ serverId }: { serverId: string }) {
     const commandToHistory = {
       id: rconCommandHistoryId,
       senderType: "user",
-      sender: session.user.name,
+      sender: session?.user?.name,
       dateTime: Date.now().toString(),
       message: rcon_command,
     };

@@ -1,8 +1,10 @@
 import { NextResponse } from "next/server";
-import { prisma } from "../../../../../lib/database";
+import { prisma } from "@/lib/database";
 import { Server, RCON, MasterServer } from "@fabricio-191/valve-server-query";
 import { Server as ValveServer } from "@fabricio-191/valve-server-query/typings";
 
+// Extend the BigInt prototype to add a toJSON method
+// This is needed because JSON.stringify doesn't handle BigInt values by default
 BigInt.prototype["toJSON"] = function () {
   return this.toString();
 };

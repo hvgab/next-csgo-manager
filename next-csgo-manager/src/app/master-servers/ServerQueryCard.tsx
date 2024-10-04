@@ -41,7 +41,7 @@ export default function ServerQueryCard({ serverId }: { serverId: number }) {
             <p>Workshop Map ? {serverData.mapWorkshopId}</p>
             <p>Last ping {serverData.lastPing}</p>
             <p className="mt-1 text-s font-medium text-gray-900">
-              {serverData.rcon_password}
+              {serverData.rconPassword}
             </p>
           </div>
         </div>

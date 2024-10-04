@@ -7,6 +7,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import Navbar2 from "@/components/layout/Navbar2";
 
 const inter = Inter({ subsets: ["latin"] });
+import Breadcrumb from "./components/Breadcrumb";
 
 export const metadata = {
   title: "Create Next App",

@@ -1,52 +1,48 @@
 import { NextResponse } from "next/server";
-import { useRouter } from 'next/router';
-import { Server, RCON, MasterServer, } from '@fabricio-191/valve-server-query';
+import { useRouter } from "next/router";
+import { Server, RCON, MasterServer } from "@fabricio-191/valve-server-query";
 
 BigInt.prototype["toJSON"] = function () {
-    return this.toString();
+  return this.toString();
 };
 
 // GET /api/master-servers
 export async function GET(request: Request) {
+  async function getServers() {
+    const filter = new MasterServer.Filter()
+      .add("appid", 730)
+      .add("gamedir", "csgo");
 
-    async function getServers() {
+    console.log("filter: ");
+    console.log(filter);
 
-        const filter = new MasterServer.Filter()
-            .add("appid", 730)
-            .add("gamedir", "csgo")
+    const data = await MasterServer({
+      quantity: 10, // or Infinity or 'all'
+      region: "EUROPE",
+      timeout: 3000,
+      filter: filter,
+    });
+    console.log("data:");
+    console.log(JSON.stringify(data, null, 4));
+    return data;
+  }
 
-        console.log("filter: ")
-        console.log(filter)
+  let servers_address_list: string[] = await getServers();
+  console.log(`Master servers: ${servers_address_list.length}`);
 
-        const data = await MasterServer({
-            quantity: 10, // or Infinity or 'all'
-            region: 'EUROPE',
-            timeout: 3000,
-            filter: filter
-        })
-        console.log("data:")
-        console.log(JSON.stringify(data, null, 4))
-        return data
-    }
+  let servers: [{ key: number; ip: string; port: number }] = [];
 
-    let servers_address_list: string[] = await getServers()
-    console.log(`Master servers: ${servers_address_list.length}`)
+  // for (let index = 0; index < servers_address_list.length; index++) {
+  for (let index = 0; index < 10; index++) {
+    console.log(`index: ${index}`);
 
-    let servers: [{ key: number, ip: string, port: number }] = []
+    const server = servers_address_list[index];
+    const [ip, port] = server.split(":");
+    console.log(`ipport: ${ip} ${port}`);
+    servers.push({ key: index, ip: ip, port: Number(port) });
+  }
 
-    // for (let index = 0; index < servers_address_list.length; index++) {
-    for (let index = 0; index < 10; index++) {
-        console.log(`index: ${index}`)
+  console.log(`Master Servers Returned: ${servers.length}`);
 
-        const server = servers_address_list[index];
-        const [ip, port] = server.split(":");
-        console.log(`ipport: ${ip} ${port}`)
-        servers.push({ key: index, ip: ip, port: Number(port) })
-    }
-
-    console.log(`Master Servers Returned: ${servers.length}`)
-
-    return NextResponse.json(servers);
-
+  return NextResponse.json(servers);
 }
-

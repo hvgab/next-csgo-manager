@@ -26,9 +26,15 @@ export default async function ServerCard({ server }) {
   //   workshop = await localGet(`api/steam/IPublishedFileService/GetDetails/${workshopId}`);
   // }
 
-  const { data: serverData, error: serverDataError } = useSWR("/api/servers/" + server.id, fetcher);
+  const { data: serverData, error: serverDataError } = useSWR(
+    "/api/servers/" + server.id,
+    fetcher
+  );
 
-  const { data: serverQuery, error: serverQueryError } = useSWR("/api/servers/" + server.id + "/query", fetcher);
+  const { data: serverQuery, error: serverQueryError } = useSWR(
+    "/api/servers/" + server.id + "/query",
+    fetcher
+  );
 
   const { data: workshop, error: workshopDataError } = useSWR(
     () => `/api/steam/IPublishedFileService/GetDetails/${serverData.workshopId}`
@@ -49,7 +55,11 @@ export default async function ServerCard({ server }) {
         <div className="bg-white max-w-sm rounded overflow-hidden shadow-lg">
           {workshop !== null ? (
             <>
-              <img className="w-full" src={workshop.preview_url} alt={workshop.preview_url} />
+              <img
+                className="w-full"
+                src={workshop.preview_url}
+                alt={workshop.preview_url}
+              />
               <p>{workshop.title}</p>
               <p>{workshop.file_description}</p>
             </>
@@ -62,7 +72,9 @@ export default async function ServerCard({ server }) {
               <p className="mt-1 text-lg font-medium text-gray-900">
                 {server.name} {server.host}
               </p>
-              <p className="mt-1 text-s font-medium text-gray-900">{server.rcon_password}</p>
+              <p className="mt-1 text-s font-medium text-gray-900">
+                {server.rconPassword}
+              </p>
             </div>
           </div>
           <div className="px-6 pt-4 pb-2">

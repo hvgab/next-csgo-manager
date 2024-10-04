@@ -36,7 +36,7 @@ export default function ServerDbCard({ serverId }: { serverId: number }) {
               {serverData.name} {serverData.host}
             </p>
             <p className="mt-1 text-s font-medium text-gray-900">
-              {serverData.rcon_password}
+              {serverData.rconPassword}
             </p>
           </div>
         </div>

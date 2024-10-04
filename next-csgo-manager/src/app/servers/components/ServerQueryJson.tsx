@@ -7,13 +7,14 @@ import fetcher from "@/lib/fetcher";
 
 export default function ServerQueryCard({ serverId }: { serverId: string }) {
   const { data, error, isLoading } = useSWR(
-    `/api/servers/${serverId}/query`,
+    `/api/servers/${serverId}/info`,
     fetcher
   );
 
   if (isLoading) {
     return <CardSkeleton />;
   }
+
   if (error) {
     return (
       <div>

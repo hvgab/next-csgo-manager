@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { useRouter } from "next/router";
-import { prisma } from "../../../../../lib/database";
+import { prisma } from "@/lib/database";
 import { Server, RCON, MasterServer } from "@fabricio-191/valve-server-query";
 
 BigInt.prototype["toJSON"] = function () {
