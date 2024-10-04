@@ -1,4 +1,8 @@
-const { Server, RCON, MasterServer } = require("@fabricio-191/valve-server-query");
+const {
+  Server,
+  RCON,
+  MasterServer,
+} = require("@fabricio-191/valve-server-query");
 
 export async function mapNameToWorkshopId(mapName: string) {
   // Given a string like 'workshop/1590058182/de_grid' return '1590058182'

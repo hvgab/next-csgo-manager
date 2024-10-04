@@ -17,14 +17,11 @@ const nextConfig = {
       },
       {
         protocol: "https",
-        hostname: "www.placekitten.com"
+        hostname: "placecats.com",
       },
-      {
-        protocol: "http",
-        hostname: "www.placekitten.com"
-      }
     ],
   },
+  pageExtensions: ["page.tsx", "tsx"],
 };
 
 module.exports = nextConfig;

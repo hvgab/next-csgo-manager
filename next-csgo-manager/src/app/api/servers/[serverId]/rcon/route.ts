@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { useRouter } from "next/router";
-import { prisma } from "../../../../lib/database";
+import { prisma } from "@/lib/database";
 import { Server, RCON, MasterServer } from "@fabricio-191/valve-server-query";
 
 BigInt.prototype["toJSON"] = function () {
@@ -12,17 +12,18 @@ export async function POST(
   request: Request,
   { params: { serverId } }: { params: { serverId: string } }
 ) {
-  const server = await prisma.server.findUnique({
-    where: { id: serverId },
-  });
-  console.log(`rcon.route server: ${JSON.stringify(server)}`);
-  if (server == null) {
-    return NextResponse.json({ status: "error", error: "server not found" });
+  const server = await prisma.server.findUnique({ where: { id: serverId } });
+  if (!server) {
+    return NextResponse.json(
+      { status: "error", error: "server not found" },
+      { status: 404 }
+    );
   }
+  console.log(`rcon.route server: ${JSON.stringify(server)}`);
   if (server.rconPassword == null) {
     return NextResponse.json({
       status: "error",
-      error: "rconPassword not set for server",
+      error: "rcon_password not set for server",
     });
   }
 

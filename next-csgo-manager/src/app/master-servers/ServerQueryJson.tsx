@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import CardSkeleton from "../components/skeletons/cardSkeleton";
+import CardSkeleton from "../../components/skeletons/cardSkeleton";
 
 export default function ServerQueryCard({ serverId }: { serverId: number }) {
   const [serverData, setServerData] = useState(null);

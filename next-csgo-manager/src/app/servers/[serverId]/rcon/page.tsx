@@ -1,6 +1,6 @@
 "use client";
 
-import RconComponent from "../../RconComponent copy";
+import RconComponent from "../../components/RconComponent";
 
 export default function ServerDetailRcon({
   params: { serverId },

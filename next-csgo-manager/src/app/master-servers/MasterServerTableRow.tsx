@@ -51,10 +51,10 @@ export default function MasterServerTableRow({
           <div className="avatar">
             <div className="mask mask-squircle w-12 h-12">
               <Image
-                src=""
+                src="https://placecats.com/50/50"
                 alt="Avatar Tailwind CSS Component"
-                width={500}
-                height={500}
+                width={48}
+                height={48}
               />
             </div>
           </div>

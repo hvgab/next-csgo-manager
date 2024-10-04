@@ -1,84 +1,18 @@
-import React, { FormEvent, useState } from "react";
+import { createServer } from "@/actions/servers";
+import ServerForm from "@/components/servers/ServerForm";
 
-export default function CreateServer() {
+// create a new server component ServersCreate.
+export default function ServersCreate() {
   return (
-    <div className="w-full max-w-xs m-auto">
-      <form
-        method="POST"
-        action="/api/servers"
-        // onSubmit={submitForm}
-        className="dark:bg-slate-800 shadow-md rounded px-8 pt-6 pb-8 mb-4"
-      >
-        <div>
-          <label htmlFor="host" className="block mb-2">
-            Host
-          </label>
-          <input
-            required
-            type="text"
-            id="host"
-            name="host"
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-slate-50 mb-3 leading-tight focus:outline-none focus:shadow-outline"
-          />
-        </div>
-
-        <div>
-          <label htmlFor="port" className="block mb-2">
-            Port
-          </label>
-          <input
-            required
-            type="number"
-            id="port"
-            name="port"
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-slate-50 mb-3 leading-tight focus:outline-none focus:shadow-outline"
-          />
-        </div>
-
-        <div>
-          <label htmlFor="loginPassword" className="block mb-2">
-            Login Password
-          </label>
-          <input
-            type="password"
-            id="loginPassword"
-            name="loginPassword"
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-slate-50 mb-3 leading-tight focus:outline-none focus:shadow-outline"
-          />
-        </div>
-
-        <div>
-          <label htmlFor="rconPassword" className="block mb-2">
-            Rcon Password
-          </label>
-          <input
-            type="password"
-            id="rconPassword"
-            name="rconPassword"
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-slate-50 mb-3 leading-tight focus:outline-none focus:shadow-outline"
-          />
-        </div>
-
-        <div>
-          <label htmlFor="admins" className="block mb-2">
-            Admins
-          </label>
-          <input
-            type="text"
-            name="admins"
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-slate-50 mb-3 leading-tight focus:outline-none focus:shadow-outline"
-          />
-        </div>
-
-        <div className="flex items-center justify-between">
-          <button
-            type="submit"
-            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-          >
-            Submit
-          </button>
-        </div>
-      </form>
-    </div>
+    <main className="flex min-h-screen flex-col items-start p-24">
+      <div className="mb-32 text-center lg:max-w-5xl lg:w-full lg:mb-0 lg:grid-cols-4 lg:text-left">
+        {/* // Renders a ServerForm component, passing the createServer action as the form action  */}
+        {/* // and an initial data object with empty title and content. */}
+        <ServerForm
+          formAction={createServer}
+          initialData={{ host: "", port: 27015 }}
+        />
+      </div>
+    </main>
   );
 }

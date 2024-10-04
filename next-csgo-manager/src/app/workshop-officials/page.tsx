@@ -1,6 +1,6 @@
 import type { InferGetServerSidePropsType, GetServerSideProps } from "next";
 import Link from "next/link";
-import PublishedFileDetails from "../components/steam/PublishedFileDetails";
+import PublishedFileDetails from "../../components/steam/PublishedFileDetails";
 
 type Repo = {
   name: string;
@@ -17,19 +17,6 @@ async function getData() {
       cache: "no-cache",
     }
   );
-
-  console.log(`res.ok ${res.ok}`);
-  console.log(`res.status ${res.status}`);
-  console.log(`res.statusText ${res.statusText}`);
-  // console.log(`res.headers ${res.headers}`);
-  // console.log(`res.body ${res.body}`);
-  // let text = await res.text();
-  // console.log(`res.text ${text}`);
-
-  if (!res.ok) {
-    return null;
-  }
-
   const maps = await res.json();
   console.log(`maps.length: ${maps.length}`);
   return maps;

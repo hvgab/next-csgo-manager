@@ -10,142 +10,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Organization {
-  id   String @id @default(cuid())
-  name String
-  cups Cup[]
-}
-
-model Cup {
-  id   String @id @default(cuid())
-  name String
-
-  Organization   Organization? @relation(fields: [organizationId], references: [id])
-  organizationId String?
-
-  teams Team[] @relation("TeamCups")
-}
-
-model Match {
-  id   String @id @default(cuid())
-  name String
-
-  // Which server is the match played on?
-  server   Server? @relation(fields: [serverId], references: [id])
-  serverId String?
-
-  matchTitle       String? // If blank Get5 will set it.
-  dateTime         DateTime? // When is the match planned to be played at?
-  clinch_series    Boolean   @default(true) //      help_text="Don't play third match in BO3 if one team has already won 2.",
-  num_maps         Int       @default(3)
-  players_per_team Int       @default(5)
-
-  // # coaches_per_team = models.IntegerField(default=2)
-  // # coaches_must_ready = models.BooleanField(default=False)
-  // # min_players_to_ready = models.IntegerField(default=0)
-  // # min_spectators_to_ready = models.IntegerField(default=0)
-  skip_veto Boolean @default(false)
-  // # veto_first = models.CharField(choices=('team1', 'team2', 'random'), default='team1')
-  // # side_type = models.CharField(choices=('standard', 'always_knife', 'never_knife'), default='standard')
-  // # map_sides =
-  // # spectators
-  maplist   String
-  // @default("--- Competitive ---\nde_inferno
-  // de_overpass
-  // de_train
-  // de_vertigo
-  // de_ancient
-  // de_anubis
-  // de_breach
-  // de_cache
-  // de_dust2
-  // de_mirage
-  // de_tuscan
-  // de_nuke
-
-  // *** Wingman ***
-  // de_inferno
-  // de_overpass
-  // de_train
-  // de_vertigo
-  // de_blagai
-  // de_cbble
-  // de_lake
-  // de_prime
-  // de_shortdust
-  // de_shortnuk
-
-  // *** Wingman Workshop ***
-  // de_marine
-  // de_gracia
-  // de_evon
-  // de_eternity
-  // de_akihabara
-  // de_austria
-  // de_beerhouse
-
-  // *** Vintercup ***
-  // de_inferno
-  // de_overpass
-  // de_train
-  // de_vertigo
-  // de_cbble
-  // de_lake
-  // de_shortdust
-  // ")
-  // help_text="7 Maps. One map per line.",
-
-  team1   Team   @relation("Team1Matches", fields: [team1Id], references: [id])
-  team1Id String
-  team2   Team   @relation("Team2Matches", fields: [team2Id], references: [id])
-  team2Id String
-  // team1 = models.ForeignKey(
-  // "Team", on_delete=models.CASCADE, related_name="match_set_as_team1"
-  // )
-  // team2 = models.ForeignKey(
-  // "Team", on_delete=models.CASCADE, related_name="match_set_as_team2"
-  // )
-
-  // series_type = models.CharField(max_length=64, choices=SERIES_TYPE_CHOICES)
-
-  winner       Team?   @relation("WinnerTeam", fields: [winnerTeamId], references: [id])
-  winnerTeamId String?
-
-  pluginVersion String?
-
-  forfeit    Boolean  @default(false)
-  cancelled  Boolean  @default(false)
-  finished   Boolean  @default(false)
-  start_time DateTime
-  end_time   DateTime
-  max_maps   Int
-  title      String
-  api_key    String?
-
-  veto_mappool String?
-  // map_stats
-
-  team1_score Int?
-  team2_score Int?
-
-  // @property
-  // def finalized(self):
-  // return self.cancelled or self.finished
-
-  // @property
-  // def is_pending(self):
-  // return self.start_time is None and not self.cancelled
-
-  // @property
-  // def is_finished(self):
-  // return self.end_time is not None and not self.cancelled
-
-  // @property
-  // def is_live(self):
-  // return (
-  // self.start_time is not None and self.end_time is None and not self.cancelled
-  // )
-}
 
 model Team {
   id              String   @id @default(cuid())
@@ -153,6 +17,7 @@ model Team {
   tag             String
   flag            String
   logo            String
+
   players         Player[]
   cups            Cup[]    @relation("TeamCups")
   matchesAsTeam1  Match[]  @relation("Team1Matches")
@@ -169,30 +34,78 @@ model Player {
 }
 
 model Server {
-  id                  String                @id @default(cuid())
-  host                String
-  port                Int
-  joinPassword        String?
-  rconPassword        String?
-  owner               User                  @relation("ServerUserOwner", fields: [ownerUserId], references: [id])
-  admins              User[]                @relation("ServerUserAdmins")
-  ownerUserId         String
-  RconCommandResponse RconCommandResponse[]
-  RconCommandRequest  RconCommandRequest[]
-  Match               Match[]
+  id           String  @id @default(cuid())
+  host         String
+  port         Int
+  rconPassword String?
+  owner        User    @relation("ServerUserOwner", fields: [ownerUserId], references: [id])
+  ownerUserId  String
+  admins       User[]  @relation("ServerUserAdmins")
+  match        Match[]
 }
 
-// AUTH
-// datasource db {
-//   provider = "postgresql"
-//   url      = env("DATABASE_URL")
-//   shadowDatabaseUrl = env("SHADOW_DATABASE_URL") // Only needed when using a cloud provider that doesn't support the creation of new databases, like Heroku. Learn more: https://pris.ly/d/migrate-shadow
-// }
+model PlayersOnTeam {
+  team       Team     @relation(fields: [teamId], references: [id])
+  player     User     @relation(fields: [userId], references: [id])
+  assignedAt DateTime @default(now())
+  teamId     String
+  userId     String
 
-// generator client {
-//   provider        = "prisma-client-js"
-//   previewFeatures = ["referentialActions"] // You won't need this in Prisma 3.X or higher.
-// }
+  @@id([teamId, userId])
+}
+
+model Match {
+  id             String    @id @default(cuid())
+  gameServerId   String?
+  matchTitle     String?   @default("")
+  matchDateTime  DateTime?
+  clinchSeries   Boolean   @default(true)
+  numMaps        Int       @default(3)
+  playersPerTeam Int       @default(5)
+  skipVeto       Boolean   @default(false)
+  maplist        String    @default("")
+  team1Id        String?
+  team2Id        String?
+  seriesType     String
+  winnerId       String?
+  pluginVersion  String?   @default("unknown")
+  forfeit        Boolean?  @default(false)
+  cancelled      Boolean?  @default(false)
+  finished       Boolean?  @default(false)
+  startTime      DateTime?
+  endTime        DateTime?
+  maxMaps        Int?
+  title          String?   @default("")
+  apiKey         String?   @default("")
+  vetoMappool    String?   @default("")
+  team1Score     Int?
+  team2Score     Int?
+
+  team1      Team?   @relation("MatchTeamAsTeam1", fields: [team1Id], references: [id])
+  team2      Team?   @relation("MatchTeamAsTeam2", fields: [team2Id], references: [id])
+  teamWinner Team?   @relation("MatchTeamAsWinner", fields: [winnerId], references: [id])
+  gameServer Server? @relation(fields: [gameServerId], references: [id])
+}
+
+model Organization {
+  id      String @id @default(cuid())
+  name    String
+  owner   User   @relation(fields: [ownerId], references: [id])
+  ownerId String
+  admins  User[] @relation("OrganizationAdmins")
+  cup     Cup[]
+}
+
+model Cup {
+  id             String        @id @default(cuid())
+  name           String
+  organization   Organization? @relation(fields: [organizationId], references: [id])
+  organizationId String?
+  owner          User          @relation(fields: [ownerId], references: [id])
+  ownerId        String
+  admins         User[]        @relation("CupAdmins")
+  teams Team[] @relation("TeamCups")
+}
 
 model Account {
   id                String  @id @default(cuid())
@@ -233,9 +146,13 @@ model User {
   accounts      Account[]
   sessions      Session[]
 
-  adminServers       Server[]             @relation("ServerUserAdmins")
-  ownerServers       Server[]             @relation("ServerUserOwner")
-  RconCommandRequest RconCommandRequest[]
+  adminServers           Server[]        @relation("ServerUserAdmins")
+  ownerServers           Server[]        @relation("ServerUserOwner")
+  organizationSetAsOwner Organization[]
+  organizationSetAsAdmin Organization[]  @relation("OrganizationAdmins")
+  cupSetAsOwner          Cup[]
+  cupSetAsAdmin          Cup[]           @relation("CupAdmins")
+  onTeams                PlayersOnTeam[]
 }
 
 model VerificationToken {

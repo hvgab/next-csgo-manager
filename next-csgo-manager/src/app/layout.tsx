@@ -1,9 +1,11 @@
 import "./globals.css";
 import { Inter } from "next/font/google";
-import Navbar from "./navbar";
-import AuthContext from "./components/AuthContext";
-import Sidebar from "./sidebar";
-import Footer from "./footer";
+import Navbar from "../components/layout/Navbar";
+import NavbarD from "../components/layout/NavbarDaisy";
+import AuthContext from "../components/layout/AuthContext";
+import { ThemeProvider } from "@/components/theme-provider";
+import Navbar2 from "@/components/layout/Navbar2";
+
 const inter = Inter({ subsets: ["latin"] });
 import Breadcrumb from "./components/Breadcrumb";
 
@@ -20,25 +22,19 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <AuthContext>
-          <Navbar></Navbar>
-          <Breadcrumb
-            homeElement={"Home"}
-            separator={<span>/</span>}
-            activeClasses="text-slate-100"
-            containerClasses="flex"
-            listClasses="hover:underline mx-2 text-slate-400"
-            capitalizeLinks
-          />
-          <div className="relative flex h-screen overflow-hidden">
-            {/* <Sidebar></Sidebar> */}
-            <div className="flex-1 overflow-y-auto h-screen">
-              <div className="m-2"></div>
-              <div className="min-h-[calc(100vh-20rem)]">{children}</div>
-              <Footer></Footer>
-            </div>
-          </div>
-        </AuthContext>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <AuthContext>
+            <Navbar></Navbar>
+            <NavbarD></NavbarD>
+            {/* <Navbar2></Navbar2> */}
+            {children}
+          </AuthContext>
+        </ThemeProvider>
       </body>
     </html>
   );
